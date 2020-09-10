@@ -1,0 +1,16 @@
+{
+  "name": "room",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "repository": "git+https://github.com/perichor/Room.git",
+  "author": "perichor <sandejeremy@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/perichor/Room/issues"
+  },
+  "homepage": "https://github.com/perichor/Room#readme"
+}
