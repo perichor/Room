@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index.js"
+    "start": "yarn server",
+    "server": "node ./src/server.js",
+    "client": "node ./src/client.js"
   },
   "repository": "git+https://github.com/perichor/Room.git",
   "author": "perichor <sandejeremy@gmail.com>",
@@ -12,5 +14,8 @@
   "bugs": {
     "url": "https://github.com/perichor/Room/issues"
   },
-  "homepage": "https://github.com/perichor/Room#readme"
+  "homepage": "https://github.com/perichor/Room#readme",
+  "dependencies": {
+    "bitfield": "^3.0.0"
+  }
 }
