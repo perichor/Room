@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="LineShape2D" id=1]
+
+[node name="invis_wall" type="StaticBody2D"]
+
+[node name="collider" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
