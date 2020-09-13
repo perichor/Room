@@ -1,13 +1,13 @@
 var networking = require("./networking");
 
-var TextMessage = exports.TextMessage = function (text) {
+var PositionUpdate = exports.PositionUpdate = function (text) {
   this.text = text;
 };
 
-TextMessage.prototype = new networking.Message();
-TextMessage.prototype.typeid = 0;
+PositionUpdate.prototype = new networking.Message();
+PositionUpdate.prototype.typeid = 0;
 
-TextMessage.prototype.encode = function () {
+PositionUpdate.prototype.encode = function () { // not used???
   if (!this._buffer) {
     var dataBuf = new Buffer(this.text, "utf8");
     var sizeBuf = new Buffer(4);
@@ -17,11 +17,11 @@ TextMessage.prototype.encode = function () {
   return this._buffer;
 };
 
-TextMessage.decode = function (buf) {
+PositionUpdate.decode = function (buf) {
   var size = buf.readUInt32BE(0);
   var index = 4 + size;
   var text = buf.toString("utf8", 4, index);
-  return [new TextMessage(text), index];
+  return [new PositionUpdate(text), index];
 };
 
 for (var k in exports) {

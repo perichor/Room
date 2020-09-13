@@ -1,5 +1,5 @@
-var Connection = require("./connection.js");
-var messaging = require("./messaging.js");
+var Connection = require('./connection.js');
+var messaging = require('./messaging.js');
 
 exports.Message = messaging.Message;
 exports.registerMessageType = messaging.registerMessageType;

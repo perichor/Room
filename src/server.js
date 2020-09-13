@@ -6,22 +6,19 @@ var PORT = process.argv[2] | 8081;
 
 var connection = networking.createConnection();
 
-connection.on("listening", function () {
-  console.log("Server is listening!", connection.listening);
+connection.on('listening', function () {
+  console.log('Server is listening!', connection.listening);
 });
 
-connection.on("peer", function (peer) {
-  console.log("New connection from " + peer.id);
-  peer.on("message", function (msg) {
-    if (msg instanceof protocol.TextMessage) {
-      console.log("Got text message from " + peer.id + ": " + msg.text);
-      peer.send(new protocol.TextMessage("OLEH"));
-    } else {
-      console.log("Got " + (typeof msg) + " from " + peer.id + "!", msg);
-    }
+connection.on('peer', function (peer) {
+  console.log('New connection from ' + peer.id);
+  peer.on('message', function (msg) {
+    console.log('Got position update from ' + peer.id + ': ' + msg.text);
+    // peer.send(new protocol.PositionUpdate('OLEH'));
+    // add serverside game logic 
   });
-  peer.on("disconnect", function () {
-      console.log(peer.id + " have been diconnected");
+  peer.on('disconnect', function () {
+    console.log(peer.id + ' has diconnected');
   });
 });
 connection.listen(PORT);
@@ -35,7 +32,7 @@ var rl = readline.createInterface({
   output: process.stdout
 });
 rl.on('line', function (line) {
-  if (line == "kill" || line == "stop") {
+  if (line == 'kill' || line == 'stop') {
     exitHandler.bind(null, { exit: true });
   }
   return null;

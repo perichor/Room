@@ -1,21 +1,21 @@
-var messaging = require("./messaging");
+var messaging = require('./messaging');
 
-var EventEmitter = require("events").EventEmitter;
+var EventEmitter = require('events').EventEmitter;
 
 var Peer = module.exports = function Peer (id, address, port) {
   this.id = id;
   this.address = address;
   this.port = port;
   this.nextMessageId = 0;
-  this.seq = -1;                // highest seq of received packet
+  this.seq = -1;                // latest remote seq
   this.seqLocal = 0;            // seq of the next sent packet
-  this.seqsReceived = {};       // used to ack remote packets
+  this.seqsReceived = {};       // acks i.e. received sequences
   this.messageIdsReceived = {}; // used to filter duplicate messages (how to clean this up?)
   this.pendingMessages = {};    // will be considered to send on next flush
   this.messageIdsBySeq = {};    // used to ack messages when packet is acked
 };
 
-Peer.prototype = new EventEmitter(); // emits "ack", "message"
+Peer.prototype = new EventEmitter();
 Peer.prototype.constructor = Peer;
 
 Peer.prototype.send = function (msg) {
@@ -25,39 +25,33 @@ Peer.prototype.send = function (msg) {
 
 Peer.prototype.recvMessage = function (msg) {
   if (!this.messageIdsReceived[msg.id]) {
-    this.messageIdsReceived[msg.id] = 1;
-    this.emit("message", msg);
-  } else {
-    console.log("DUPL! " + msg.id);
+    this.messageIdsReceived[msg.id] = true;
+    this.emit('message', msg);
   }
 };
 
 Peer.prototype.recvPacket = function (seq, acks) {
-  // Work with remote seq and acks
-  this.seqsReceived[seq] = 1;  // now we can acknowledge this packet
+  this.seqsReceived[seq] = 1;
   if (seq > this.seq || this.seq < 0) {
-    this.seq = seq; // store latest seq received
-    // cleanup old receives
-    var tooOld = seq - messaging.ACKS; // we'll not ack this guys anyway
-    for (var recvd in this.seqsReceived) {
-      if (recvd < tooOld) {
-        // TODO: maybe there is better data structure to hold them?
-        delete this.seqsReceived[recvd];
+    this.seq = seq;
+    // cleanup old acks
+    var tooOld = seq - messaging.ACKS;
+    for (var ackdSeq in this.seqsReceived) {
+      if (ackdSeq < tooOld) {
+        delete this.seqsReceived[ackdSeq];
       }
     }
   }
   // ack messages from acked packets
-  var messageIdsBySeq = this.messageIdsBySeq;
-  var pendingMessages = this.pendingMessages;
-  for (var i = 0, ii = acks.length; i < ii; ++i) {
-    var messageIds = messageIdsBySeq[acks[i]];
+  for (var i = 0; i < acks.length; ++i) {
+    var messageIds = this.messageIdsBySeq[acks[i]];
     if (messageIds) {
-      for (var j = 0, jj = messageIds.length; j < jj; ++j) {
+      for (var j = 0; j < messageIds.length; ++j) {
         var messageId = messageIds[j];
-        delete pendingMessages[messageId];
-        this.emit("ack", messageId);
+        delete this.pendingMessages[messageId];
+        this.emit('ack', messageId);
       }
-      delete messageIdsBySeq[acks[i]];
+      delete this.messageIdsBySeq[acks[i]];
     }
   }
 }
