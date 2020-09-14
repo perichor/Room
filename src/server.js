@@ -13,8 +13,10 @@ connection.on('listening', function () {
 connection.on('peer', function (peer) {
   console.log('New connection from ' + peer.id);
   peer.on('message', function (msg) {
-    console.log('Got position update from ' + peer.id + ': ' + msg.text);
-    // peer.send(new protocol.PositionUpdate('OLEH'));
+    if (msg instanceof protocol.PositionUpdate) {
+      console.log('Got position update from ' + peer.id + ' : x=' + msg.x + ' y=' + msg.y);
+      peer.send(new protocol.PositionUpdate(msg.x, msg.y));
+    }
     // add serverside game logic 
   });
   peer.on('disconnect', function () {

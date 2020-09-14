@@ -3,24 +3,90 @@ extends Node
 var udp = PacketPeerUDP.new();
 var connected = false;
 
+const ACKS: int = 32;
+
 var SERVER_HOST: String = '127.0.0.1';
 var PORT: int = 8081;
 
-var ACKS = 32;
+var seqLocal: int = 0; # latest sequence number sent
+var messageId: int = 0; # latest messageId sent
+var ackBitfieldLocal: int = 0; # last ACKS seq from server stored in bitfield
+
+var seq: int = 0; # latest sequence number recieved
+var ack: int = 0; # latest ack from server
+var ackBitfield: int = 0; # last ACKS acks from server stored in bitfield
+
+onready var player = get_node('player');
 
 func _ready():
 	udp.connect_to_host(SERVER_HOST, PORT);
-	var buffer = PoolByteArray();
-	buffer.append_array(poolU32Bit(2)); # seq
-	buffer.append_array(poolU32Bit(50)); # ack
-	buffer.append_array(poolU32Bit(4294967295)); # ack bitfield
-	buffer.append(0); # message typeId
-	buffer.append_array(poolU32Bit(2)); # message id
-	buffer.append_array(poolU32Bit(5)); # message length
-	buffer.append_array('Hello'.to_utf8()); # message
-	udp.put_packet(buffer);
+
+func _process(_delta):
+	buildPositionUpdatePacket();
+	if udp.get_available_packet_count() > 0:
+		recievePacket();
+
+func recievePacket():
+	var packet: PoolByteArray = udp.get_packet();
+	var packetSeq: int = readPoolInt(packet.subarray(0, 3));
+	var packetAck: int = readPoolInt(packet.subarray(4, 7));
+	var packetAckBitfield: int = readPoolInt(packet.subarray(8, 11));
+#	print('Recieved Packet Header', ' seq: ', packetSeq, ' ack: ', packetAck, ' bitfield: ', packetAckBitfield);
+	if (packetSeq >= seq - 1):
+		seq = packetSeq;
+		ack = packetAck;
+		ackBitfield = packetAckBitfield;
+		if ((packet.size() - 12) > 0):
+			var messagesBuffer: PoolByteArray = packet.subarray(12, (packet.size() - 1));
+			while (messagesBuffer.size()):
+				var packetMessageType: int = readPoolInt(messagesBuffer.subarray(0, 0));
+				var packetMessageId: int = readPoolInt(messagesBuffer.subarray(1, 4));
+#				print('Message Recieved', ' messageTypeId=', packetMessageType, ' messageId=', packetMessageId);
+				if (packetMessageType == 0):
+					handlePositionMessageUpdate(messagesBuffer.subarray(5, 12));
+				if (messagesBuffer.size() > 13):
+					messagesBuffer = messagesBuffer.subarray(13, messagesBuffer.size() - 1);
+				else:
+					messagesBuffer = PoolByteArray();
+#	var x = readPoolInt(packet.subarray(17, 21));
+#	var y = readPoolInt(packet.subarray(21, 25));
+#	print("x: ", x);
+#	print("y: ", y);
+
+func handlePositionMessageUpdate(message: PoolByteArray):
+	print('Position Update Recieved: x=', readPoolInt(message.subarray(0, 3)), ' y=', readPoolInt(message.subarray(4, 7)))
 	
-#func _process(_delta):
+	
+func buildPositionUpdatePacket():
+	var x: int = int(round(player.position[0]));
+	var y: int = int(round(player.position[1]));
+	var message: PoolByteArray = PoolByteArray();
+	message.append_array(poolU32Bit(x));
+	message.append_array(poolU32Bit(y));
+	udp.put_packet(buildUDPPacket(0, message));
+	
+func buildUDPPacket(messageType: int, message: PoolByteArray):
+	incrementLocalSequence();
+	incrementMessageId();
+	var buffer = PoolByteArray();
+	buffer.append_array(poolU32Bit(seqLocal)); # seq
+	buffer.append_array(poolU32Bit(seq)); # ack
+	buffer.append_array(poolU32Bit(ackBitfieldLocal)); # ack bitfield
+	buffer.append(messageType); # message typeId
+	buffer.append_array(poolU32Bit(messageId)); # message id
+	buffer.append_array(message); # message
+#	print('Sent Packet Header', ' seq: ', seqLocal, ' ack: ', seq, ' bitfield: ', ackBitfieldLocal);
+	return buffer;
+	
+func incrementLocalSequence():
+	seqLocal = incrementU32BitInt(seqLocal);
+func incrementMessageId():
+	messageId = incrementU32BitInt(messageId);
+func incrementU32BitInt(integer: int):
+	if (integer == 4294967295):
+		return 0;
+	else:
+		return integer + 1;
 
 func writeUTF8String(buffer: PoolByteArray, string: String):
 	buffer.append_array(string.to_utf8());

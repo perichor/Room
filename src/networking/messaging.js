@@ -23,22 +23,12 @@ var Message = exports.Message = function Message () {
   this.typeid = 0;
 };
 
-Message.prototype.encode = function () {
-  // Should return a Buffer, optionally with caching in this._buffer
-  // Format is up to you =) Just try to make it as small as possible
-  // Don't forget that Node.js buffers allocated uninitialized!
-  if (!this._buffer) {
-    this._buffer = new Buffer(MESSAGE_BUFFER_SIZE);
-  }
-  return this._buffer;
-};
-
 exports.encodeMessage = function (msg) {
   var msgHeader = new Buffer(5);
   msgHeader.writeUInt8(msg.typeid, 0);
   msgHeader.writeUInt32BE(msg.id, 1);
   var buf = msg.encode();
-  return [msgHeader, buf];
+  return Buffer.concat([msgHeader, buf]);
 };
 
 exports.decodeMessage = function (buf) {

@@ -1,27 +1,27 @@
 var networking = require("./networking");
 
-var PositionUpdate = exports.PositionUpdate = function (text) {
-  this.text = text;
+var PositionUpdate = exports.PositionUpdate = function (x, y) {
+  this.x = x;
+  this.y = y;
 };
 
 PositionUpdate.prototype = new networking.Message();
 PositionUpdate.prototype.typeid = 0;
 
-PositionUpdate.prototype.encode = function () { // not used???
+PositionUpdate.prototype.encode = function () {
   if (!this._buffer) {
-    var dataBuf = new Buffer(this.text, "utf8");
-    var sizeBuf = new Buffer(4);
-    sizeBuf.writeUInt32BE(dataBuf.length, 0);
-    this._buffer = Buffer.concat([sizeBuf, dataBuf]);
+    var dataBuf = new Buffer(8);
+    dataBuf.writeUInt32BE(this.x, 0);
+    dataBuf.writeUInt32BE(this.y, 4);
+    this._buffer = dataBuf;
   }
   return this._buffer;
 };
 
 PositionUpdate.decode = function (buf) {
-  var size = buf.readUInt32BE(0);
-  var index = 4 + size;
-  var text = buf.toString("utf8", 4, index);
-  return [new PositionUpdate(text), index];
+  var x = buf.readUInt32BE(0);
+  var y = buf.readUInt32BE(4);
+  return [new PositionUpdate(x, y), 8];
 };
 
 for (var k in exports) {

@@ -60,8 +60,7 @@ var Connection = module.exports = function Connection() {
       for (var m in peer.pendingMessages) {
         msg = peer.pendingMessages[m];
 
-        var sent = msg.sent;
-        if (!sent) {
+        if (!msg.sent) {
           messagesForThisPacket[msg.id] = msg;
         }
       }
@@ -73,7 +72,7 @@ var Connection = module.exports = function Connection() {
       for (var k in messagesForThisPacket) {
         msg = messagesForThisPacket[k];
         var msgBufs = messaging.encodeMessage(msg);
-        for (var i = 0, ii = msgBufs.length; i < ii; ++i) {
+        for (var i = 0; i < msgBufs.length; ++i) {
           size += msgBufs[i].length;
         }
         if (size > PMAX) {
