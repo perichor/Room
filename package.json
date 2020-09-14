@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "yarn server",
-    "server": "node ./src/server.js",
+    "server": "node ./src/server/server.js",
     "client": "node ./src/client.js"
   },
   "repository": "git+https://github.com/perichor/Room.git",

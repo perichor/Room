@@ -42,21 +42,16 @@ func recievePacket():
 				var packetMessageType: int = readPoolInt(messagesBuffer.subarray(0, 0));
 				var packetMessageId: int = readPoolInt(messagesBuffer.subarray(1, 4));
 #				print('Message Recieved', ' messageTypeId=', packetMessageType, ' messageId=', packetMessageId);
-				if (packetMessageType == 0):
-					handlePositionMessageUpdate(messagesBuffer.subarray(5, 12));
+				if (packetMessageType == 1):
+					handlePlayerUpdate(messagesBuffer.subarray(5, 12));
 				if (messagesBuffer.size() > 13):
 					messagesBuffer = messagesBuffer.subarray(13, messagesBuffer.size() - 1);
 				else:
 					messagesBuffer = PoolByteArray();
-#	var x = readPoolInt(packet.subarray(17, 21));
-#	var y = readPoolInt(packet.subarray(21, 25));
-#	print("x: ", x);
-#	print("y: ", y);
 
-func handlePositionMessageUpdate(message: PoolByteArray):
-	print('Position Update Recieved: x=', readPoolInt(message.subarray(0, 3)), ' y=', readPoolInt(message.subarray(4, 7)))
-	
-	
+func handlePlayerUpdate(message: PoolByteArray):
+	print(Array(message));
+
 func buildPositionUpdatePacket():
 	var x: int = int(round(player.position[0]));
 	var y: int = int(round(player.position[1]));
@@ -98,6 +93,10 @@ func writeU32BitInteger(buffer: PoolByteArray, integer: int):
 	buffer.append_array(poolU32Bit(integer));
 func writeU64BitInteger(buffer: PoolByteArray, integer: int):
 	buffer.append_array(poolU64Bit(integer));
+func readU32BitInt(pool: PoolByteArray, index: int):
+	return readPoolInt(pool.subarray(index, index + 3));
+func readU64BitInt(pool: PoolByteArray, index: int):
+	return readPoolInt(pool.subarray(index, index + 7));
 func readPoolInt(pool: PoolByteArray):
 	var byteArray: Array = Array(pool);
 	var integer: int = 0;

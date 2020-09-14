@@ -4,6 +4,6 @@ var messaging = require('./messaging.js');
 exports.Message = messaging.Message;
 exports.registerMessageType = messaging.registerMessageType;
 
-exports.createConnection = function () {
+exports.createConnection = function() {
   return new Connection();
 };

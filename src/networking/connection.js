@@ -8,14 +8,16 @@ var messaging = require('./messaging');
 var RATE = 15;   // packet sending loop interval delay (ms)
 var PMAX = 1200; // maximum packet size (bytes). 1400 is known as common MTU
 
+var DISCONNECT_TIMEOUT = 5000; // mills since last packet to disconnect
+
 var Connection = module.exports = function Connection() {
   this.socket = dgram.createSocket('udp4');
   this.peers = {};
 
-  this.socket.on('close', function () { clearInterval(this.peerUpdateInterval); }.bind(this));
-  this.socket.on('error', function (e) { console.log('Network socket error!'); throw e; });
+  this.socket.on('close', function() { clearInterval(this.peerUpdateInterval); }.bind(this));
+  this.socket.on('error', function(e) { console.log('Network socket error!'); throw e; });
 
-  this.socket.on('message', function (data, remote) {
+  this.socket.on('message', function(data, remote) {
     var address = remote.address;
     var port = remote.port;
     var peerId = address + ':' + port;
@@ -46,12 +48,17 @@ var Connection = module.exports = function Connection() {
     }
   }.bind(this));
 
-  this.peerUpdateInterval = setInterval(function () {
+  this.peerUpdateInterval = setInterval(function() {
     // Generate and send packets to all peers on interval RATE
     var curtime = hrtime();
     for (var p in this.peers) {
       var peer = this.peers[p];
       var msg;
+
+      if ((curtime - peer.lastHandshake) > DISCONNECT_TIMEOUT) {
+        delete this.peers[p];
+        peer.disconnect();
+      }
 
       var seq = peer.seqLocal++;
       var headerBuf = messaging.encodeHeader(seq, peer);
@@ -92,23 +99,23 @@ var Connection = module.exports = function Connection() {
 Connection.prototype = new EventEmitter();
 Connection.prototype.constructor = Connection;
 
-Connection.prototype.close = function () {
+Connection.prototype.close = function() {
   this.socket.close();
 };
 
-Connection.prototype.directConnect = function (address, port) {
+Connection.prototype.directConnect = function(address, port) {
   var id = generatePeerId(address, port);
   var peer = new Peer(id, address, port);
   this.peers[id] = peer;
   return peer;
 };
 
-Connection.prototype.rawSend = function (packet, peer) {
+Connection.prototype.rawSend = function(packet, peer) {
   return this.socket.send(packet, 0, packet.length, peer.port, peer.address);
 };
 
-Connection.prototype.listen = function (port) {
-  this.socket.on('listening', function () {
+Connection.prototype.listen = function(port) {
+  this.socket.on('listening', function() {
     this.listening = this.socket.address();
     this.emit('listening');
   }.bind(this));

@@ -5,7 +5,7 @@ var MESSAGE_BUFFER_SIZE = exports.MESSAGE_BUFFER_SIZE = 256;   // Length of indi
 
 var messageTypes = {};
 
-exports.registerMessageType = function (type) {
+exports.registerMessageType = function(type) {
   var typeid = type.prototype.typeid;
   var oldtype = messageTypes[typeid];
   if (oldtype) {
@@ -23,7 +23,7 @@ var Message = exports.Message = function Message () {
   this.typeid = 0;
 };
 
-exports.encodeMessage = function (msg) {
+exports.encodeMessage = function(msg) {
   var msgHeader = new Buffer(5);
   msgHeader.writeUInt8(msg.typeid, 0);
   msgHeader.writeUInt32BE(msg.id, 1);
@@ -31,7 +31,7 @@ exports.encodeMessage = function (msg) {
   return Buffer.concat([msgHeader, buf]);
 };
 
-exports.decodeMessage = function (buf) {
+exports.decodeMessage = function(buf) {
   var typeid = buf.readUInt8(0);
   var id = buf.readUInt32BE(1);
   var type = messageTypes[typeid];
@@ -46,7 +46,7 @@ exports.decodeMessage = function (buf) {
   }
 };
 
-exports.encodeHeader = function (seq, peer) {
+exports.encodeHeader = function(seq, peer) {
   // >>> 0 casts to uint32
   seq = seq >>> 0;          // packet seq
   var ack = peer.seq >>> 0; // peer.seq we received for sure (it's seq of the latest packet received)
@@ -62,7 +62,7 @@ exports.encodeHeader = function (seq, peer) {
   return Buffer.concat([head, acksField.buffer])
 };
 
-exports.decodeHeader = function (buf) {
+exports.decodeHeader = function(buf) {
   var seq = buf.readUInt32BE(0);
   var ack = buf.readUInt32BE(4);
   var acksStart = 8;

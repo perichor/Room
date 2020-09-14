@@ -1,8 +1,9 @@
 var messaging = require('./messaging');
+var timing = require('./timing');
 
 var EventEmitter = require('events').EventEmitter;
 
-var Peer = module.exports = function Peer (id, address, port) {
+var Peer = module.exports = function Peer(id, address, port) {
   this.id = id;
   this.address = address;
   this.port = port;
@@ -13,24 +14,26 @@ var Peer = module.exports = function Peer (id, address, port) {
   this.messageIdsReceived = {}; // used to filter duplicate messages (how to clean this up?)
   this.pendingMessages = {};    // will be considered to send on next flush
   this.messageIdsBySeq = {};    // used to ack messages when packet is acked
+  this.lastHandshake = timing.hrtime(); // time of last handshake
 };
 
 Peer.prototype = new EventEmitter();
 Peer.prototype.constructor = Peer;
 
-Peer.prototype.send = function (msg) {
+Peer.prototype.send = function(msg) {
   msg.id = this.nextMessageId++;
   this.pendingMessages[msg.id] = msg;
 };
 
-Peer.prototype.recvMessage = function (msg) {
+Peer.prototype.recvMessage = function(msg) {
   if (!this.messageIdsReceived[msg.id]) {
     this.messageIdsReceived[msg.id] = true;
     this.emit('message', msg);
   }
 };
 
-Peer.prototype.recvPacket = function (seq, acks) {
+Peer.prototype.recvPacket = function(seq, acks) {
+  this.lastHandshake = timing.hrtime();
   this.seqsReceived[seq] = 1;
   if (seq > this.seq || this.seq < 0) {
     this.seq = seq;
@@ -54,4 +57,9 @@ Peer.prototype.recvPacket = function (seq, acks) {
       delete this.messageIdsBySeq[acks[i]];
     }
   }
+}
+
+Peer.prototype.disconnect = function() {
+  this.emit('disconnected');
+  delete this;
 }
