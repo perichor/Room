@@ -58,7 +58,7 @@ func handlePlayerUpdate(message: PoolByteArray):
 	var playerId: int = readU32BitInt(message, 0);
 	var x: int = readU32BitInt(message, 4);
 	var y: int = readU32BitInt(message, 8);
-	if (!remotePlayers[playerId]):
+	if (!remotePlayers.has(playerId)):
 		remotePlayers[playerId] = {
 			'playerId': playerId,
 			'x': x,

@@ -24,7 +24,7 @@ var Message = exports.Message = function Message () {
 };
 
 exports.encodeMessage = function(msg) {
-  var msgHeader = new Buffer(5);
+  var msgHeader = new Buffer.alloc(5);
   msgHeader.writeUInt8(msg.typeid, 0);
   msgHeader.writeUInt32BE(msg.id, 1);
   var buf = msg.encode();
@@ -50,7 +50,7 @@ exports.encodeHeader = function(seq, peer) {
   // >>> 0 casts to uint32
   seq = seq >>> 0;          // packet seq
   var ack = peer.seq >>> 0; // peer.seq we received for sure (it's seq of the latest packet received)
-  var head = new Buffer(8);
+  var head = new Buffer.alloc(8);
   head.writeUInt32BE(seq, 0);
   head.writeUInt32BE(ack, 4);
   var acksField = new Bitfield(ACKS); // bitfield contains ack status for ACKS packets before peer.seq

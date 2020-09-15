@@ -10,7 +10,7 @@ PositionUpdate.prototype.typeid = 0;
 
 PositionUpdate.prototype.encode = function () {
   if (!this._buffer) {
-    var dataBuf = new Buffer(8);
+    var dataBuf = new Buffer.alloc(8);
     dataBuf.writeUInt32BE(this.x, 0);
     dataBuf.writeUInt32BE(this.y, 4);
     this._buffer = dataBuf;
@@ -36,7 +36,7 @@ PlayerUpdate.prototype.typeid = 1;
 
 PlayerUpdate.prototype.encode = function () {
   if (!this._buffer) {
-    var dataBuf = new Buffer(12);
+    var dataBuf = new Buffer.alloc(12);
     dataBuf.writeUInt32BE(this.playerId, 0);
     dataBuf.writeUInt32BE(this.x, 4);
     dataBuf.writeUInt32BE(this.y, 8);
