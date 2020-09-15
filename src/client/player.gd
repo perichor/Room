@@ -1,4 +1,7 @@
 extends KinematicBody2D
+
+const DISCONNECT_TIMER: int = 5000;
+
 var remotePlayerId: int;
 var localPlayer: bool = true;
 var score: int = 0;
@@ -31,6 +34,8 @@ func _physics_process(_delta):
 	else:
 		var playerStatus = parent.getPlayerStatusById(remotePlayerId);
 		player.position = Vector2(playerStatus.x, playerStatus.y);
+		if (OS.get_ticks_msec() - playerStatus.lastHandshakeTime > DISCONNECT_TIMER):
+			parent.remove_child(player);
 	
 func setRemotePlayerId(id: int):
 	remotePlayerId = id;

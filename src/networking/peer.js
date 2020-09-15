@@ -60,6 +60,6 @@ Peer.prototype.recvPacket = function(seq, acks) {
 }
 
 Peer.prototype.disconnect = function() {
-  this.emit('disconnected');
+  this.emit('disconnected', this.id);
   delete this;
 }

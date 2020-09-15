@@ -5,7 +5,7 @@ var connected = false;
 
 const ACKS: int = 32;
 
-var SERVER_HOST: String = '192.168.1.5';
+var SERVER_HOST: String = '127.0.0.1';
 var PORT: int = 8081;
 
 var seqLocal: int = 0; # latest sequence number sent
@@ -31,7 +31,7 @@ func _process(_delta):
 		recievePacket();
 
 func getPlayerStatusById(playerId):
-	return remotePlayers[playerId];
+	return remotePlayers[playerId];	
 
 func recievePacket():
 	var packet: PoolByteArray = udp.get_packet();
@@ -58,20 +58,18 @@ func recievePacket():
 						print('Message Protocol Unrecognized. Skipping Packet...');
 						messagesBuffer = PoolByteArray();
 
-
 func handlePlayerUpdate(message: PoolByteArray):
 	var playerId: int = readU32BitInt(message, 0);
 	var x: int = readU32BitInt(message, 4);
 	var y: int = readU32BitInt(message, 8);
 	if (!remotePlayers.has(playerId)):
-		print('add')
+		var newPlayer = playerResource.instance();
 		remotePlayers[playerId] = {
 			'playerId': playerId,
 			'x': x,
 			'y': y,
 			'lastHandshakeTime': OS.get_ticks_msec()
 		}
-		var newPlayer = playerResource.instance();
 		newPlayer.setRemotePlayerId(playerId);
 		self.add_child(newPlayer);
 	else:

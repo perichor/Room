@@ -28,18 +28,19 @@ connection.on('peer', function(peer) {
         players[peer.id].x = msg.x,
         players[peer.id].y = msg.y
         for (var i in players) {
+          var toPlayer = players[i];
           for (var j in players) {
-            var player = players[j];
-            if (i !== j && player) {
-              players[i].peer.send(new protocol.PlayerUpdate(player.id, player.x, player.y));
+            var fromPlayer = players[j];
+            if (toPlayer && fromPlayer && fromPlayer.peer.address !== toPlayer.peer.address) {
+              toPlayer.peer.send(new protocol.PlayerUpdate(fromPlayer.id, fromPlayer.x, fromPlayer.y));
             }
           }
         }
       }
     }
   });
-  peer.on('disconnected', function() {
-    if (players[peer.id]) { // ISSUE: Double event handler trigger needs cleanup
+  peer.on('disconnected', function(peerId) {
+    if (players[peerId] && peer.id === peerId) {
       delete players[peer.id];
       console.log(peer.id + ' has disconnected');
     }
