@@ -5,7 +5,7 @@ var connected = false;
 
 const ACKS: int = 32;
 
-var SERVER_HOST: String = '127.0.0.1';
+var SERVER_HOST: String = '192.168.1.5';
 var PORT: int = 8081;
 
 var seqLocal: int = 0; # latest sequence number sent
@@ -27,8 +27,9 @@ func _ready():
 
 func _process(_delta):
 	buildPositionUpdatePacket();
-	if udp.get_available_packet_count() > 0:
-		recievePacket();
+	if (udp.get_available_packet_count() > 0):
+		while(udp.get_available_packet_count()):
+			recievePacket();
 
 func getPlayerStatusById(playerId):
 	return remotePlayers[playerId];	
