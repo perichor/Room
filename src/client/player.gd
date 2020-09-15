@@ -10,7 +10,7 @@ var speed: int = 10;
 
 var vel: Vector2 = Vector2();
 onready var sprite: Sprite = get_node('sprite');
-onready var player: KinematicBody2D = get_node('.');
+onready var player: KinematicBody2D = self;
 onready var parent: Node = get_parent();
 
 func _physics_process(_delta):

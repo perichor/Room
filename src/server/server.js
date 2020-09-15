@@ -39,11 +39,9 @@ connection.on('peer', function(peer) {
       }
     }
   });
-  peer.on('disconnected', function(peerId) {
-    if (players[peerId] && peer.id === peerId) {
-      delete players[peer.id];
-      console.log(peer.id + ' has disconnected');
-    }
+  peer.on('disconnected', function() {
+    delete players[peer.id];
+    console.log(peer.id + ' has disconnected');
   });
 });
 connection.listen(PORT);
