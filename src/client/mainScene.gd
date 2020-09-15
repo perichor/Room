@@ -16,7 +16,11 @@ var seq: int = 0; # latest sequence number recieved
 var ack: int = 0; # latest ack from server
 var ackBitfield: int = 0; # last ACKS acks from server stored in bitfield
 
-onready var player = get_node('player');
+var playerResource = preload("res://player.tscn");
+
+onready var localPlayer = get_node('player');
+
+var remotePlayers = {};
 
 func _ready():
 	udp.connect_to_host(SERVER_HOST, PORT);
@@ -26,35 +30,52 @@ func _process(_delta):
 	if udp.get_available_packet_count() > 0:
 		recievePacket();
 
+func getPlayerStatusById(playerId):
+	return remotePlayers[playerId];
+
 func recievePacket():
 	var packet: PoolByteArray = udp.get_packet();
-	var packetSeq: int = readPoolInt(packet.subarray(0, 3));
-	var packetAck: int = readPoolInt(packet.subarray(4, 7));
-	var packetAckBitfield: int = readPoolInt(packet.subarray(8, 11));
-#	print('Recieved Packet Header', ' seq: ', packetSeq, ' ack: ', packetAck, ' bitfield: ', packetAckBitfield);
-	if (packetSeq >= seq - 1):
+	var packetSeq: int = readU32BitInt(packet, 0);
+	var packetAck: int = readU32BitInt(packet, 4);
+	var packetAckBitfield: int = readU32BitInt(packet, 8);
+	if (packetSeq >= seq - 1): # was causing issues when using > seq
 		seq = packetSeq;
 		ack = packetAck;
 		ackBitfield = packetAckBitfield;
 		if ((packet.size() - 12) > 0):
 			var messagesBuffer: PoolByteArray = packet.subarray(12, (packet.size() - 1));
 			while (messagesBuffer.size()):
-				var packetMessageType: int = readPoolInt(messagesBuffer.subarray(0, 0));
-				var packetMessageId: int = readPoolInt(messagesBuffer.subarray(1, 4));
-#				print('Message Recieved', ' messageTypeId=', packetMessageType, ' messageId=', packetMessageId);
+				var packetMessageType: int = readU8BitInt(messagesBuffer, 0);
+#				var packetMessageId: int = readU32BitInt(messagesBuffer, 1);
 				if (packetMessageType == 1):
-					handlePlayerUpdate(messagesBuffer.subarray(5, 12));
-				if (messagesBuffer.size() > 13):
-					messagesBuffer = messagesBuffer.subarray(13, messagesBuffer.size() - 1);
+					handlePlayerUpdate(messagesBuffer.subarray(5, 16));
+					if (messagesBuffer.size() > 17):
+						messagesBuffer = messagesBuffer.subarray(17, messagesBuffer.size() - 1);
 				else:
 					messagesBuffer = PoolByteArray();
 
 func handlePlayerUpdate(message: PoolByteArray):
-	print(Array(message));
+	var playerId: int = readU32BitInt(message, 0);
+	var x: int = readU32BitInt(message, 4);
+	var y: int = readU32BitInt(message, 8);
+	if (!remotePlayers[playerId]):
+		remotePlayers[playerId] = {
+			'playerId': playerId,
+			'x': x,
+			'y': y,
+			'lastHandshakeTime': OS.get_ticks_msec()
+		}
+		var newPlayer = playerResource.instance();
+		newPlayer.setRemotePlayerId(playerId);
+		self.add_child(newPlayer);
+	else:
+		remotePlayers[playerId].x = x;
+		remotePlayers[playerId].y = y;
+		remotePlayers[playerId].lastHandshakeTime = OS.get_ticks_msec();
 
 func buildPositionUpdatePacket():
-	var x: int = int(round(player.position[0]));
-	var y: int = int(round(player.position[1]));
+	var x: int = int(round(localPlayer.position[0]));
+	var y: int = int(round(localPlayer.position[1]));
 	var message: PoolByteArray = PoolByteArray();
 	message.append_array(poolU32Bit(x));
 	message.append_array(poolU32Bit(y));
@@ -97,6 +118,8 @@ func readU32BitInt(pool: PoolByteArray, index: int):
 	return readPoolInt(pool.subarray(index, index + 3));
 func readU64BitInt(pool: PoolByteArray, index: int):
 	return readPoolInt(pool.subarray(index, index + 7));
+func readU8BitInt(pool: PoolByteArray, index: int):
+	return readPoolInt(pool.subarray(index, index));
 func readPoolInt(pool: PoolByteArray):
 	var byteArray: Array = Array(pool);
 	var integer: int = 0;
