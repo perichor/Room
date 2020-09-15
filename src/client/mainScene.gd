@@ -5,7 +5,7 @@ var connected = false;
 
 const ACKS: int = 32;
 
-var SERVER_HOST: String = '127.0.0.1';
+var SERVER_HOST: String = '192.168.1.5';
 var PORT: int = 8081;
 
 var seqLocal: int = 0; # latest sequence number sent
@@ -44,21 +44,27 @@ func recievePacket():
 		ackBitfield = packetAckBitfield;
 		if ((packet.size() - 12) > 0):
 			var messagesBuffer: PoolByteArray = packet.subarray(12, (packet.size() - 1));
-			while (messagesBuffer.size()):
-				var packetMessageType: int = readU8BitInt(messagesBuffer, 0);
-#				var packetMessageId: int = readU32BitInt(messagesBuffer, 1);
-				if (packetMessageType == 1):
-					handlePlayerUpdate(messagesBuffer.subarray(5, 16));
-					if (messagesBuffer.size() > 17):
-						messagesBuffer = messagesBuffer.subarray(17, messagesBuffer.size() - 1);
-				else:
-					messagesBuffer = PoolByteArray();
+			if (messagesBuffer.size()):
+				while (messagesBuffer.size()):
+					var packetMessageType: int = readU8BitInt(messagesBuffer, 0);
+	#				var packetMessageId: int = readU32BitInt(messagesBuffer, 1);
+					if (packetMessageType == 1):
+						handlePlayerUpdate(messagesBuffer.subarray(5, 16));
+						if (messagesBuffer.size() > 17):
+							messagesBuffer = messagesBuffer.subarray(17, messagesBuffer.size() - 1);
+						else:
+							messagesBuffer = PoolByteArray();
+					else:
+						print('Message Protocol Unrecognized. Skipping Packet...');
+						messagesBuffer = PoolByteArray();
+
 
 func handlePlayerUpdate(message: PoolByteArray):
 	var playerId: int = readU32BitInt(message, 0);
 	var x: int = readU32BitInt(message, 4);
 	var y: int = readU32BitInt(message, 8);
 	if (!remotePlayers.has(playerId)):
+		print('add')
 		remotePlayers[playerId] = {
 			'playerId': playerId,
 			'x': x,
