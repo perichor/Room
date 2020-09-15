@@ -5,8 +5,8 @@ var connected = false;
 
 const ACKS: int = 32;
 
-var SERVER_HOST: String = '192.168.1.5';
-var PORT: int = 8081;
+var SERVER_HOST: String = '104.34.146.138';
+var PORT: int = 4242;
 
 var seqLocal: int = 0; # latest sequence number sent
 var messageId: int = 0; # latest messageId sent
