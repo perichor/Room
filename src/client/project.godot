@@ -16,8 +16,12 @@ _global_script_class_icons={
 [application]
 
 config/name="Room"
-run/main_scene="res://mainScene.tscn"
+run/main_scene="res://scenes/main_menu.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+global="*res://scripts/global.gd"
 
 [input]
 

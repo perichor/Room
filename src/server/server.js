@@ -1,6 +1,6 @@
 var readline = require('readline');
-var networking = require('../networking');
-var protocol = require('../protocol');
+var networking = require('./networking');
+var protocol = require('./protocol');
 
 var PORT = process.argv[2] | 8081;
 
