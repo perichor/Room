@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scripts/ok_button.gd" type="Script" id=1]
+
+[node name="restart_dialog" type="PopupDialog"]
+margin_left = 320.0
+margin_top = 216.0
+margin_right = 704.0
+margin_bottom = 360.0
+
+[node name="complete_text" type="Label" parent="."]
+margin_left = 80.0
+margin_top = 16.0
+margin_right = 304.0
+margin_bottom = 47.0
+text = "Download Complete!
+"
+align = 1
+
+[node name="please_restart_text" type="Label" parent="."]
+margin_left = 80.0
+margin_top = 56.0
+margin_right = 304.0
+margin_bottom = 87.0
+text = "Please restart the client"
+align = 1
+valign = 1
+
+[node name="ok_button" type="Button" parent="."]
+margin_left = 160.0
+margin_top = 96.0
+margin_right = 224.0
+margin_bottom = 120.0
+text = "Yes"
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

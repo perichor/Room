@@ -6,6 +6,7 @@ onready var invalidIp: Label = get_node('ip_input/invalid_ip_text');
 onready var loading: TextureRect = get_node('loading');
 onready var loadingText: Label = get_node('loading/loading_text');
 onready var downloadDialog: PopupDialog = get_node('loading/download_dialog');
+onready var restartDialog: PopupDialog = get_node('loading/restart_dialog');
 onready var serverUnavailable: Label = get_node('server_down_text');
 
 var http = preload('res://addons/http.gd').new();
@@ -66,9 +67,9 @@ func save(content, path):
 	file.close();
 	
 func updateAndRestart():
-#	print(OS.execute(OS.get_executable_path().get_base_dir() + '/updater.sh', []))
-#	print(OS.execute('sleep', [5, 'unzip', OS.get_executable_path().get_base_dir() + '/temp.zip', 'rm', OS.get_executable_path().get_base_dir() + '/temp.zip']));
-	Unzip.unzip(OS.get_executable_path().get_base_dir() + '/temp.zip', OS.get_executable_path().get_base_dir())
-	OS.execute('del', [OS.get_executable_path().get_base_dir() + '/temp.zip']);
-	OS.execute('start', [OS.get_executable_path().get_base_dir() + '/Room.exe']);
+	Unzip.unzip(OS.get_executable_path().get_base_dir() + '/temp.zip', OS.get_executable_path().get_base_dir());
+	restartDialog.show();
+	
+func quitGame():
+	restartDialog.hide();
 	get_tree().quit()
