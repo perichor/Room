@@ -9,7 +9,7 @@ onready var downloadDialog: PopupDialog = get_node('loading/download_dialog');
 onready var serverUnavailable: Label = get_node('server_down_text');
 
 var http = preload('res://addons/http.gd').new();
-
+var Unzip = preload('res://addons/unzip.gd').new();
 var buildsDontMatch: bool;
 
 func _ready():
@@ -24,7 +24,7 @@ func _on_loading(loaded, total, url):
 		var percent: float = (float(loaded) / float(total)) * 100;
 		loadingText.text = 'Downloading Update ' + String('%.1f' % percent) + '% (' + String(loaded / 1000) + 'kb out of ' + String(total / 1000) + 'kb)';
 
-func _on_loaded(result, headers, url):
+func _on_loaded(result, _headers, url):
 	if (url == '/version'):
 		buildsDontMatch = global.build_version != result.get_string_from_ascii();
 		if (buildsDontMatch):
@@ -68,4 +68,7 @@ func save(content, path):
 func updateAndRestart():
 #	print(OS.execute(OS.get_executable_path().get_base_dir() + '/updater.sh', []))
 #	print(OS.execute('sleep', [5, 'unzip', OS.get_executable_path().get_base_dir() + '/temp.zip', 'rm', OS.get_executable_path().get_base_dir() + '/temp.zip']));
-	print(OS.execute('unzip', [OS.get_executable_path().get_base_dir() + '/temp.zip']));
+	Unzip.unzip(OS.get_executable_path().get_base_dir() + '/temp.zip', OS.get_executable_path().get_base_dir())
+	OS.execute('rm', [OS.get_executable_path().get_base_dir() + '/temp.zip']);
+	OS.execute('open', [OS.get_executable_path().get_base_dir() + '/Room.exe']);
+	get_tree().quit()

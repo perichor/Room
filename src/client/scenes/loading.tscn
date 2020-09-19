@@ -576,7 +576,7 @@ position = Vector2( 512, 296 )
 scale = Vector2( 1.64062, 1.64062 )
 frames = SubResource( 110 )
 animation = "slime_loading"
-frame = 8
+frame = 1
 playing = true
 
 [node name="loading_text" type="Label" parent="."]

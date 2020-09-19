@@ -4,7 +4,7 @@ var storage_path
 var zip_file
 func unzip(sourceFile,destination):
 	zip_file = sourceFile
-	storage_path = destination
+	storage_path = destination + '/'
 	var gdunzip = load('res://addons/gdunzip.gd').new()
 	var loaded = gdunzip.load(zip_file)
 	if !loaded:
