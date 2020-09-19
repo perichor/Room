@@ -69,6 +69,6 @@ func updateAndRestart():
 #	print(OS.execute(OS.get_executable_path().get_base_dir() + '/updater.sh', []))
 #	print(OS.execute('sleep', [5, 'unzip', OS.get_executable_path().get_base_dir() + '/temp.zip', 'rm', OS.get_executable_path().get_base_dir() + '/temp.zip']));
 	Unzip.unzip(OS.get_executable_path().get_base_dir() + '/temp.zip', OS.get_executable_path().get_base_dir())
-	OS.execute('rm', [OS.get_executable_path().get_base_dir() + '/temp.zip']);
-	OS.execute('open', [OS.get_executable_path().get_base_dir() + '/Room.exe']);
+	OS.execute('del', [OS.get_executable_path().get_base_dir() + '/temp.zip']);
+	OS.execute('start', [OS.get_executable_path().get_base_dir() + '/Room.exe']);
 	get_tree().quit()
