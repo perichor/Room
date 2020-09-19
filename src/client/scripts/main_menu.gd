@@ -68,6 +68,8 @@ func save(content, path):
 	
 func updateAndRestart():
 	Unzip.unzip(OS.get_executable_path().get_base_dir() + '/temp.zip', OS.get_executable_path().get_base_dir());
+	var dir = Directory.new()
+	dir.remove(OS.get_executable_path().get_base_dir() + '/temp.zip');
 	restartDialog.show();
 	
 func quitGame():
