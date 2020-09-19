@@ -43,7 +43,7 @@ func _on_no_response():
 	
 func downloadUpdate():
 	loadingText.text = 'Downloading Update...';
-	http.getHttp(global.SERVER_HOST, '/download', global.FILE_PORT, false, true);
+	http.getHttp(global.SERVER_HOST, global.FILE_PORT, '/download', false, true);
 
 func play():
 	serverUnavailable.hide();
@@ -52,7 +52,7 @@ func play():
 		invalidIp.hide();
 		loading.show();
 		loadingText.text = 'Verifying Server Version';
-		http.getHttp(global.SERVER_HOST, '/version', global.FILE_PORT, false, false);
+		http.getHttp(global.SERVER_HOST, global.FILE_PORT, '/version', false, false);
 	else:
 		invalidIp.show();
 		

@@ -10,10 +10,10 @@ func _init():
 	add_user_signal("loaded",[arg_result])
 	add_user_signal("no_response")
 
-func getHttp(domain, url, port, ssl, showProgress):
+func getHttp(domain, port, url, ssl, showProgress):
 	if(t.is_active()):
 		return
-	t.start(self,"_load",{"domain": domain, "url": url, "port": port, "ssl": ssl, "showProgress": showProgress})
+	t.start(self,"_load",{"domain": domain, "port": port, "url": url, "ssl": ssl, "showProgress": showProgress})
  
 func _load(params):
 	var err = 0

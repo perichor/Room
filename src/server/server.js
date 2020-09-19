@@ -32,7 +32,7 @@ connection.on('peer', function(peer) {
           var toPlayer = players[i];
           for (var j in players) {
             var fromPlayer = players[j];
-            if (toPlayer && fromPlayer && fromPlayer.peer.address !== toPlayer.peer.address) {
+            if (toPlayer && fromPlayer && fromPlayer.peer.id !== toPlayer.peer.id) {
               toPlayer.peer.send(new protocol.PlayerUpdate(fromPlayer.id, fromPlayer.x, fromPlayer.y));
             }
           }
