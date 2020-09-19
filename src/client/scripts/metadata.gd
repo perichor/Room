@@ -1,2 +1,2 @@
 extends Node
-const version: String = '0.1.1';
+const version: String = '0.1.2';

@@ -2,7 +2,7 @@ extends Node
 
 var build_version: String = metadata.version;
 
-var SERVER_HOST: String = '127.0.0.1';
+var SERVER_HOST: String = '104.34.146.138';
 var GAME_PORT: int = 4242;
 var FILE_PORT: int = 4243;
 
