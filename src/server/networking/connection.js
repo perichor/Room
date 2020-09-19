@@ -4,6 +4,7 @@ var EventEmitter = require('events').EventEmitter;
 var Peer = require('./peer');
 var hrtime = require('./timing').hrtime;
 var messaging = require('./messaging');
+var utils = require('./utils');
 
 var RATE = 15;   // packet sending loop interval delay (ms)
 var PMAX = 1200; // maximum packet size (bytes). 1400 is known as common MTU
@@ -34,7 +35,7 @@ var Connection = module.exports = function Connection() {
     var acks = decoded[1];
     var messagesBuf = decoded[2];
     peer.recvPacket(seq, acks);
-    if (peer.seq <= seq) { // Only recieve packet messages if packet is latest
+    if (peer.seq === seq) { // Only recieve packet messages if packet is latest
       while (messagesBuf.length) {
         var parts = messaging.decodeMessage(messagesBuf);
         if (parts && parts.length) {

@@ -1,12 +1,27 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scripts/main_menu.gd" type="Script" id=1]
 [ext_resource path="res://scripts/play_button.gd" type="Script" id=2]
+[ext_resource path="res://scenes/loading.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/download_dialog.tscn" type="PackedScene" id=4]
 
 [node name="main_menu" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="build_version" type="Label" parent="."]
+self_modulate = Color( 1, 1, 1, 0.509804 )
+margin_left = 856.0
+margin_top = 568.0
+margin_right = 1008.0
+margin_bottom = 592.0
+text = "Version: 1"
+align = 2
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -35,3 +50,30 @@ caret_blink = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="invalid_ip_text" type="Label" parent="ip_input"]
+visible = false
+margin_top = 48.0
+margin_right = 384.0
+margin_bottom = 79.0
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+text = "Invalid IP Address
+"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="loading" parent="." instance=ExtResource( 3 )]
+
+[node name="download_dialog" parent="loading" instance=ExtResource( 4 )]
+
+[node name="server_down_text" type="Label" parent="."]
+visible = false
+margin_left = 320.0
+margin_top = 520.0
+margin_right = 704.0
+margin_bottom = 536.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "Server Unavailable"
+align = 1

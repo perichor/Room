@@ -1,7 +1,10 @@
 extends Node
 
-var SERVER_HOST: String;
-var PORT: int = 4242;
+var build_version: String = metadata.version;
+
+var SERVER_HOST: String = '127.0.0.1';
+var GAME_PORT: int = 4242;
+var FILE_PORT: int = 4243;
 
 const ACKS: int = 32;
 

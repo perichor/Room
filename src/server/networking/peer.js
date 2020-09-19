@@ -1,5 +1,6 @@
 var messaging = require('./messaging');
 var timing = require('./timing');
+var utils = require('./utils');
 
 var EventEmitter = require('events').EventEmitter;
 
@@ -36,7 +37,7 @@ Peer.prototype.recvMessage = function(msg) {
 Peer.prototype.recvPacket = function(seq, acks) {
   this.lastHandshake = timing.hrtime();
   this.seqsReceived[seq] = 1;
-  if (seq > this.seq || this.seq < 0) {
+  if (utils.sequenceGreaterThan(seq, this.seq)) {
     this.seq = seq;
     // cleanup old acks
     var tooOld = seq - messaging.ACKS;

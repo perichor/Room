@@ -9,7 +9,7 @@ onready var localPlayer = get_node('player');
 var remotePlayers = {};
 
 func _ready():
-	udp.connect_to_host(global.SERVER_HOST, global.PORT);
+	udp.connect_to_host(global.SERVER_HOST, global.GAME_PORT);
 
 func _process(_delta):
 	buildPositionUpdatePacket();
