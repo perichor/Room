@@ -47,6 +47,8 @@ func downloadUpdate():
 
 func play():
 	serverUnavailable.hide();
+	if (ipInput.text == 'local' || ipInput.text == 'localhost'):
+		ipInput.text = '127.0.0.1';
 	if (ipInput.text.is_valid_ip_address()):
 		global.SERVER_HOST = ipInput.text
 		invalidIp.hide();
