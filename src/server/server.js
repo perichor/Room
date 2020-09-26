@@ -8,7 +8,7 @@ var PORT = process.argv[2] | 4242;
 var connection = networking.createConnection();
 
 connection.on('listening', function() {
-  console.log('Server is listening!', connection.listening);
+  console.log('Main Server is listening!', connection.listening);
 });
 
 var playerId = 0;
@@ -48,7 +48,7 @@ connection.on('peer', function(peer) {
 connection.listen(PORT);
 connection.socket.unref();
 
-var fileServer = childProcess.fork(__dirname + '/file-server.js');
+var fileServer = childProcess.fork(__dirname + '/http-server.js');
 
 // const net = require('net');
 // var socketTCP = net.createServer();

@@ -1,7 +1,8 @@
-[gd_scene load_steps=113 format=2]
+[gd_scene load_steps=114 format=2]
 
 [ext_resource path="res://sprites/slime.png" type="Texture" id=1]
 [ext_resource path="res://sprites/loading.png" type="Texture" id=2]
+[ext_resource path="res://scripts/loading.gd" type="Script" id=3]
 
 [sub_resource type="ImageTexture" id=1]
 lossy_quality = 0.01
@@ -567,6 +568,7 @@ margin_right = 1024.0
 margin_bottom = 600.0
 texture = SubResource( 1 )
 expand = true
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

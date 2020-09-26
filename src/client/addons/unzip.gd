@@ -10,7 +10,9 @@ func unzip(sourceFile,destination):
 	if !loaded:
 		print('- Failed loading zip file')
 		return false
+# warning-ignore:return_value_discarded
 	ProjectSettings.load_resource_pack(zip_file)
+# warning-ignore:unused_variable
 	var i = 0
 	for f in gdunzip.files:
 		unzip_file(f)

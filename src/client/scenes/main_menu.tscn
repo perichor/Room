@@ -1,7 +1,6 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scripts/main_menu.gd" type="Script" id=1]
-[ext_resource path="res://scripts/play_button.gd" type="Script" id=2]
 [ext_resource path="res://scenes/loading.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/download_dialog.tscn" type="PackedScene" id=4]
 [ext_resource path="res://scenes/restart_dialog.tscn" type="PackedScene" id=5]
@@ -27,22 +26,28 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="play_button" type="Button" parent="."]
-margin_left = 320.0
-margin_top = 384.0
-margin_right = 704.0
-margin_bottom = 512.0
-text = "Play"
-script = ExtResource( 2 )
+[node name="connect_menu" type="Control" parent="."]
+margin_right = 1024.0
+margin_bottom = 600.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ip_input" type="LineEdit" parent="."]
+[node name="connect_button" type="Button" parent="connect_menu"]
 margin_left = 320.0
-margin_top = 192.0
+margin_top = 320.0
 margin_right = 704.0
-margin_bottom = 256.0
+margin_bottom = 376.0
+text = "Connect"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ip_input" type="LineEdit" parent="connect_menu"]
+margin_left = 320.0
+margin_top = 232.0
+margin_right = 704.0
+margin_bottom = 280.0
 align = 1
 clear_button_enabled = true
 placeholder_text = "IP Address"
@@ -52,15 +57,139 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="invalid_ip_text" type="Label" parent="ip_input"]
+[node name="invalid_ip_text" type="Label" parent="connect_menu/ip_input"]
 visible = false
 margin_top = 48.0
 margin_right = 384.0
 margin_bottom = 79.0
 custom_colors/font_color = Color( 1, 0, 0, 1 )
-text = "Invalid IP Address
-"
+custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0.117647, 0.0313726, 0.0313726, 1 )
+text = "Invalid IP Address"
 align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="server_down_text" type="Label" parent="connect_menu"]
+visible = false
+margin_left = 320.0
+margin_top = 384.0
+margin_right = 704.0
+margin_bottom = 400.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "Server Unavailable"
+align = 1
+
+[node name="login_menu" type="Control" parent="."]
+visible = false
+margin_right = 1024.0
+margin_bottom = 600.0
+
+[node name="play_button" type="Button" parent="login_menu"]
+margin_left = 320.0
+margin_top = 352.0
+margin_right = 704.0
+margin_bottom = 408.0
+text = "Play"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="username_input" type="LineEdit" parent="login_menu"]
+margin_left = 320.0
+margin_top = 192.0
+margin_right = 704.0
+margin_bottom = 240.0
+align = 1
+placeholder_text = "Username"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="invalid_username_text" type="Label" parent="login_menu/username_input"]
+visible = false
+margin_top = 48.0
+margin_right = 384.0
+margin_bottom = 79.0
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0.117647, 0.0313726, 0.0313726, 1 )
+text = "Please Enter Username"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="password_input" type="LineEdit" parent="login_menu"]
+margin_left = 320.0
+margin_top = 264.0
+margin_right = 704.0
+margin_bottom = 312.0
+align = 1
+secret = true
+placeholder_text = "Password"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="invalid_password_text" type="Label" parent="login_menu/password_input"]
+visible = false
+margin_top = 48.0
+margin_right = 384.0
+margin_bottom = 79.0
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0.117647, 0.0313726, 0.0313726, 1 )
+text = "Please Enter Password"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="create_account_button" type="LinkButton" parent="login_menu"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 105.0
+margin_bottom = 22.0
+text = "Create Account"
+underline = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="connected_to_text" type="Label" parent="login_menu"]
+margin_left = 512.0
+margin_top = 8.0
+margin_right = 1016.0
+margin_bottom = 22.0
+text = "Connected to server"
+align = 2
+
+[node name="account_succesful" type="Label" parent="login_menu"]
+visible = false
+margin_left = 320.0
+margin_top = 168.0
+margin_right = 704.0
+margin_bottom = 182.0
+text = "Account created succesfully!"
+align = 1
+
+[node name="login_failed" type="Label" parent="login_menu"]
+visible = false
+margin_left = 320.0
+margin_top = 408.0
+margin_right = 704.0
+margin_bottom = 439.0
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0.117647, 0.0313726, 0.0313726, 1 )
+text = "login failed. Please try again."
+align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -71,12 +200,94 @@ __meta__ = {
 
 [node name="restart_dialog" parent="loading" instance=ExtResource( 5 )]
 
-[node name="server_down_text" type="Label" parent="."]
-visible = false
-margin_left = 320.0
-margin_top = 520.0
-margin_right = 704.0
-margin_bottom = 536.0
-custom_colors/font_color = Color( 1, 1, 1, 1 )
-text = "Server Unavailable"
+[node name="create_account" type="PopupDialog" parent="loading"]
+margin_left = 288.0
+margin_top = 112.0
+margin_right = 736.0
+margin_bottom = 440.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="input_background" type="ColorRect" parent="loading/create_account"]
+margin_left = 16.0
+margin_top = 56.0
+margin_right = 432.0
+margin_bottom = 224.0
+color = Color( 0.337255, 0.364706, 0.392157, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="create_username_input" type="LineEdit" parent="loading/create_account"]
+margin_left = 32.0
+margin_top = 80.0
+margin_right = 416.0
+margin_bottom = 128.0
 align = 1
+placeholder_text = "Username"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="create_password_input" type="LineEdit" parent="loading/create_account"]
+margin_left = 32.0
+margin_top = 152.0
+margin_right = 416.0
+margin_bottom = 200.0
+align = 1
+secret = true
+placeholder_text = "Password"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="account_unsuccesful" type="Label" parent="loading/create_account"]
+visible = false
+margin_left = 32.0
+margin_top = 232.0
+margin_right = 416.0
+margin_bottom = 263.0
+custom_colors/font_color = Color( 1, 0, 0, 1 )
+custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0.117647, 0.0313726, 0.0313726, 1 )
+text = "Username already in use, please change it and try again."
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="create_account_text" type="Label" parent="loading/create_account"]
+margin_left = 160.0
+margin_top = 16.0
+margin_right = 296.0
+margin_bottom = 40.0
+text = "Create Account"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="create_button" type="Button" parent="loading/create_account"]
+margin_left = 168.0
+margin_top = 264.0
+margin_right = 280.0
+margin_bottom = 296.0
+text = "Create"
+
+[node name="close_create_account" type="LinkButton" parent="loading/create_account"]
+margin_left = 424.0
+margin_top = 16.0
+margin_right = 432.0
+margin_bottom = 40.0
+text = "x"
+underline = 2
+[connection signal="pressed" from="connect_menu/connect_button" to="." method="connectToServer"]
+[connection signal="pressed" from="login_menu/play_button" to="." method="play"]
+[connection signal="text_entered" from="login_menu/username_input" to="." method="play"]
+[connection signal="text_entered" from="login_menu/password_input" to="." method="play"]
+[connection signal="pressed" from="login_menu/create_account_button" to="." method="openCreateAccountDialog"]
+[connection signal="pressed" from="loading/create_account/create_button" to="." method="createAccount"]
+[connection signal="pressed" from="loading/create_account/close_create_account" to="." method="hideCreateAccount"]

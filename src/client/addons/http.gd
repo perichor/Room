@@ -10,26 +10,43 @@ func _init():
 	add_user_signal("loaded",[arg_result])
 	add_user_signal("no_response")
 
-func getHttp(domain, port, url, ssl, showProgress):
+func getRequest(domain, port, url, ssl, showProgress):
 	if(t.is_active()):
 		return
-	t.start(self,"_load",{"domain": domain, "port": port, "url": url, "ssl": ssl, "showProgress": showProgress})
+	t.start(self,"_load",{"domain": domain, "port": port, "url": url, "ssl": ssl, "showProgress": showProgress, "method": HTTPClient.METHOD_GET})
+	
+func postRequest(domain, port, url, body, ssl, showProgress):
+	if(t.is_active()):
+		return
+	t.start(self,"_load",{"domain": domain, "port": port, "url": url, "ssl": ssl, "showProgress": showProgress, "method": HTTPClient.METHOD_POST,"body": body})
  
 func _load(params):
+# warning-ignore:unused_variable
 	var err = 0
 	var http = HTTPClient.new()
-	err = http.connect_to_host(params.domain,params.port,params.ssl)
- 
+	err = http.connect_to_host(params.domain,params.port,params.ssl,false)
 	while (http.get_status() == HTTPClient.STATUS_CONNECTING or http.get_status() == HTTPClient.STATUS_RESOLVING):
 		http.poll()
 		OS.delay_msec(100)
 
-	var headers = [
-		"User-Agent: Pirulo/1.0 (Godot)",
-		"Accept: */*"
-	]
+	var headers;
 
-	err = http.request(HTTPClient.METHOD_GET,params.url,headers)
+	if (params.has('body')):
+		var body = JSON.print(params.body);
+		headers = [
+			"Content-Type: application/json",
+			"Content-Length: " + str(body.length()),
+			"Accept: application/json"
+		]
+		err = http.request(params.method,params.url,headers,body);
+	else:
+		headers = [
+			"User-Agent: Pirulo/1.0 (Godot)",
+			"Accept: */*"
+		]
+		err = http.request(params.method,params.url,headers);
+		
+
 
 	while (http.get_status() == HTTPClient.STATUS_REQUESTING):
 		http.poll()
@@ -55,6 +72,7 @@ func _load(params):
 	http.close()
 	return rb
 
+# warning-ignore:shadowed_variable
 func _send_loading_signal(l, t, url):
 	emit_signal("loading", l, t, url)
 
