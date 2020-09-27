@@ -15,11 +15,11 @@ __meta__ = {
 
 [node name="build_version" type="Label" parent="."]
 self_modulate = Color( 1, 1, 1, 0.509804 )
-margin_left = 856.0
-margin_top = 568.0
-margin_right = 1008.0
-margin_bottom = 592.0
-text = "Version"
+margin_left = 1112.0
+margin_top = 688.0
+margin_right = 1264.0
+margin_bottom = 712.0
+text = "0.0.0"
 align = 2
 valign = 1
 __meta__ = {
@@ -27,6 +27,7 @@ __meta__ = {
 }
 
 [node name="connect_menu" type="Control" parent="."]
+visible = false
 margin_right = 1024.0
 margin_bottom = 600.0
 __meta__ = {
@@ -34,20 +35,20 @@ __meta__ = {
 }
 
 [node name="connect_button" type="Button" parent="connect_menu"]
-margin_left = 320.0
-margin_top = 320.0
-margin_right = 704.0
-margin_bottom = 376.0
+margin_left = 448.0
+margin_top = 368.0
+margin_right = 832.0
+margin_bottom = 424.0
 text = "Connect"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ip_input" type="LineEdit" parent="connect_menu"]
-margin_left = 320.0
-margin_top = 232.0
-margin_right = 704.0
-margin_bottom = 280.0
+margin_left = 448.0
+margin_top = 280.0
+margin_right = 832.0
+margin_bottom = 328.0
 align = 1
 clear_button_enabled = true
 placeholder_text = "IP Address"
@@ -74,34 +75,37 @@ __meta__ = {
 
 [node name="server_down_text" type="Label" parent="connect_menu"]
 visible = false
-margin_left = 320.0
-margin_top = 384.0
-margin_right = 704.0
-margin_bottom = 400.0
+margin_left = 448.0
+margin_top = 432.0
+margin_right = 832.0
+margin_bottom = 448.0
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "Server Unavailable"
 align = 1
 
 [node name="login_menu" type="Control" parent="."]
 visible = false
-margin_right = 1024.0
-margin_bottom = 600.0
+margin_right = 1280.0
+margin_bottom = 720.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="play_button" type="Button" parent="login_menu"]
-margin_left = 320.0
-margin_top = 352.0
-margin_right = 704.0
-margin_bottom = 408.0
+margin_left = 448.0
+margin_top = 432.0
+margin_right = 832.0
+margin_bottom = 488.0
 text = "Play"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="username_input" type="LineEdit" parent="login_menu"]
-margin_left = 320.0
-margin_top = 192.0
-margin_right = 704.0
-margin_bottom = 240.0
+margin_left = 448.0
+margin_top = 256.0
+margin_right = 832.0
+margin_bottom = 304.0
 align = 1
 placeholder_text = "Username"
 __meta__ = {
@@ -124,10 +128,10 @@ __meta__ = {
 }
 
 [node name="password_input" type="LineEdit" parent="login_menu"]
-margin_left = 320.0
-margin_top = 264.0
-margin_right = 704.0
-margin_bottom = 312.0
+margin_left = 448.0
+margin_top = 336.0
+margin_right = 832.0
+margin_bottom = 384.0
 align = 1
 secret = true
 placeholder_text = "Password"
@@ -162,12 +166,23 @@ __meta__ = {
 }
 
 [node name="connected_to_text" type="Label" parent="login_menu"]
-margin_left = 512.0
+margin_left = 816.0
 margin_top = 8.0
-margin_right = 1016.0
+margin_right = 1272.0
 margin_bottom = 22.0
 text = "Connected to server"
 align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="change_connection" type="LinkButton" parent="login_menu/connected_to_text"]
+margin_left = 408.0
+margin_top = 16.0
+margin_right = 456.0
+margin_bottom = 30.0
+text = "Change"
+underline = 1
 
 [node name="account_succesful" type="Label" parent="login_menu"]
 visible = false
@@ -195,16 +210,25 @@ __meta__ = {
 }
 
 [node name="loading" parent="." instance=ExtResource( 3 )]
+visible = false
 
 [node name="download_dialog" parent="loading" instance=ExtResource( 4 )]
+margin_left = 448.0
+margin_top = 288.0
+margin_right = 832.0
+margin_bottom = 432.0
 
 [node name="restart_dialog" parent="loading" instance=ExtResource( 5 )]
+margin_left = 448.0
+margin_top = 288.0
+margin_right = 832.0
+margin_bottom = 432.0
 
 [node name="create_account" type="PopupDialog" parent="loading"]
-margin_left = 288.0
-margin_top = 112.0
-margin_right = 736.0
-margin_bottom = 440.0
+margin_left = 416.0
+margin_top = 192.0
+margin_right = 864.0
+margin_bottom = 520.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -289,5 +313,6 @@ underline = 2
 [connection signal="text_entered" from="login_menu/username_input" to="." method="play"]
 [connection signal="text_entered" from="login_menu/password_input" to="." method="play"]
 [connection signal="pressed" from="login_menu/create_account_button" to="." method="openCreateAccountDialog"]
+[connection signal="pressed" from="login_menu/connected_to_text/change_connection" to="." method="switchToConnect"]
 [connection signal="pressed" from="loading/create_account/create_button" to="." method="createAccount"]
 [connection signal="pressed" from="loading/create_account/close_create_account" to="." method="hideCreateAccount"]

@@ -68,7 +68,7 @@ func _load(params):
 		
 		call_deferred("_send_loaded_signal", responseHeaders, params.url)
 	else:
-		call_deferred("_send_no_response_signal")
+		call_deferred("_send_no_response_signal", params.url)
 	http.close()
 	return rb
 
@@ -80,9 +80,9 @@ func _send_loaded_signal(responseHeaders, url):
 	var r = t.wait_to_finish()
 	emit_signal("loaded", r, responseHeaders, url);
 
-func _send_no_response_signal():
+func _send_no_response_signal(url):
 	t.wait_to_finish()
-	emit_signal("no_response")
+	emit_signal("no_response", url)
 
  # How to use:
 

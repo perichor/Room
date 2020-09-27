@@ -19,7 +19,7 @@ onready var playButton: Button = get_node('login_menu/play_button');
 onready var loading: TextureRect = get_node('loading');
 onready var downloadDialog: PopupDialog = get_node('loading/download_dialog');
 onready var restartDialog: PopupDialog = get_node('loading/restart_dialog');
-onready var createAccount: PopupDialog = get_node('loading/create_account');
+onready var createAccountDialog: PopupDialog = get_node('loading/create_account');
 onready var createUsername: LineEdit = get_node('loading/create_account/create_username_input');
 onready var createPassword: LineEdit = get_node('loading/create_account/create_password_input');
 onready var accountUnsuccessful: Label = get_node('loading/create_account/account_unsuccesful');
@@ -35,6 +35,8 @@ func _ready():
 	http.connect('loading', self, '_on_loading');
 	http.connect('loaded', self, '_on_loaded');
 	http.connect('no_response', self, '_on_no_response');
+	loading.showWithText('Connecting to server...')
+	connectToServer();
 
 func _on_loading(loaded, total, url):
 	if (url == '/download'):
@@ -51,25 +53,32 @@ func _on_loaded(result, _headers, url):
 			loading.hide();
 	elif (url == '/login'):
 		loading.hide();
-		if (result.get_string_from_ascii() == 'success'):
+		result = result.get_string_from_ascii();
+		if (result.begins_with('success')):
+			global.userId = int(result.right(8));
 			startGame();
-		else:
+		elif (result.begins_with('failure')):
+			loginFailed.text = result.right(8);
 			loginFailed.show();
 	elif (url == '/create-account'):
-		if (result.get_string_from_ascii() == 'success'):
+		result = result.get_string_from_ascii();
+		if (result.begins_with('success')):
 			loading.hide();
 			accountSuccesful.show();
 			usernameInput.text = createUsername.text;
 			passwordInput.text = createPassword.text;
-		else:
-			createAccount.show();
+		elif (result.begins_with('failure')):
+			createAccountDialog.show();
+			accountUnsuccessful.text = result.right(8);
 			accountUnsuccessful.show();
 	elif (url == '/download'):
 		loading.setText('Download Complete');
 		save(result, OS.get_executable_path().get_base_dir() + '/temp.zip');
 		updateAndRestart();
 		
-func _on_no_response():
+func _on_no_response(url):
+	if (url == '/version'):
+		switchToConnect();
 	loading.hide();
 	serverUnavailable.show();
 	
@@ -82,7 +91,7 @@ func login():
 	http.postRequest(global.SERVER_HOST, global.FILE_PORT, '/login', { 'username': usernameInput.text, 'password' : passwordInput.text.sha256_text() }, true, false);
 	
 func createAccount():
-	createAccount.hide();
+	createAccountDialog.hide();
 	accountUnsuccessful.hide();
 	loading.showWithText('Creating Account');
 	http.postRequest(global.SERVER_HOST, global.FILE_PORT, '/create-account', { 'username': createUsername.text, 'password' : createPassword.text.sha256_text() }, true, false);
@@ -92,7 +101,7 @@ func downloadUpdate():
 	http.getRequest(global.SERVER_HOST, global.FILE_PORT, '/download', true, true);
 	
 func openCreateAccountDialog():
-	createAccount.show();
+	createAccountDialog.show();
 	loading.show();
 
 func play():
@@ -124,13 +133,17 @@ func hideErrors():
 
 func hideCreateAccount():
 	loading.hide();
-	createAccount.hide();
+	createAccountDialog.hide();
 	accountUnsuccessful.hide();
 	
 func switchToLogin():
 	connectToText.text = 'Connected to server at: ' + global.SERVER_HOST;
 	connectMenu.hide();
 	loginMenu.show();
+
+func switchToConnect():
+	loginMenu.hide();
+	connectMenu.show();
 
 func startGame():
 	# warning-ignore:return_value_discarded

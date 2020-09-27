@@ -6,6 +6,8 @@ var SERVER_HOST: String = 'local';
 var GAME_PORT: int = 4242;
 var FILE_PORT: int = 4243;
 
+var userId: int;
+
 const ACKS: int = 32;
 
 var seqLocal: int = 0; # latest sequence number sent

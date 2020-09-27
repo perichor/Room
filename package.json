@@ -7,6 +7,7 @@
     "start": "npm run server",
     "server": "node ./src/server/server.js",
     "client": "node ./src/client.js",
+    "init-db": "node ./src/server/database/database-init.js",
     "certify": "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./src/server/sslcert/selfsigned.key -out ./src/server/sslcert/selfsigned.crt"
   },
   "repository": "git+https://github.com/perichor/Room.git",
@@ -18,7 +19,9 @@
   "homepage": "https://github.com/perichor/Room#readme",
   "dependencies": {
     "bitfield": "^3.0.0",
+    "bluebird": "^3.7.2",
     "express": "^4.17.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "promise-mysql": "^4.1.3"
   }
 }

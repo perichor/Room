@@ -7,15 +7,14 @@ const express = require('express');
 var privateKey  = fs.readFileSync(__dirname + '/sslcert/selfsigned.key');
 var certificate = fs.readFileSync(__dirname + '/sslcert/selfsigned.crt');
 
-var credentials = {key: privateKey, cert: certificate};
+var db = require('./database');
 
 const metadata = require('../../package.json');
+const utils = require('./utils.js');
 
 const PORT = process.argv[2] | 4243;
 
 const server = express();
-
-var users = {};
 
 server.use(
   express.urlencoded({
@@ -45,27 +44,35 @@ server.get('/version', (req, res) => {
 server.post('/create-account', (req, res) => {
   var username = req.body.username;
   var password = req.body.password;
-  res.writeHead(200);
-  if (!users[username]) {
-    users[username] = {
-      username: username,
-      password: password
-    }
-    res.end('success');
+  if (!utils.isValidUsername(username)) {
+    res.writeHead(200);
+    res.end('failure:Username invalid! Please enter a valid username.');
   } else {
-    res.end('failed');
+    db.usernameInUse(username).then((inUse) => {
+      res.writeHead(200);
+      if (!inUse) {
+        db.createAccount(username, password).then(() => {
+          res.end('success');
+        });
+      } else {
+        res.end('failure:Username already in use, please change it and try again.');
+      }
+    });
   }
 });
 
 server.post('/login', (req, res) => {
   var username = req.body.username;
   var password = req.body.password;
-  res.writeHead(200);
-  if (users[username] && users[username].password === password) {
-    res.end('success');  
-  } else {
-    res.end('failed');
-  }
+  db.getUserInfo(username, password).then((user) => {
+    res.writeHead(200);
+    console.log(user.id)
+    if (user) {
+      res.end('success: ' + user.id);
+    } else {
+      res.end('failure:Username or Password was incorrect. Please try again.');
+    }
+  });
 });
 
 var httpsServer = https.createServer({
@@ -82,5 +89,6 @@ console.log('HTTPS Server is Listening on port:', PORT, 'with client version:', 
 process.on('SIGTERM', exitHandler.bind(null, { exit: true }));
 
 function exitHandler(options, err) {
+  db.end();
   if (options.exit) process.exit();
 }

@@ -562,10 +562,9 @@ animations = [ {
 } ]
 
 [node name="loading" type="TextureRect"]
-visible = false
 self_modulate = Color( 1, 1, 1, 0.368627 )
-margin_right = 1024.0
-margin_bottom = 600.0
+margin_right = 1280.0
+margin_bottom = 720.0
 texture = SubResource( 1 )
 expand = true
 script = ExtResource( 3 )
@@ -574,18 +573,18 @@ __meta__ = {
 }
 
 [node name="loading_animation" type="AnimatedSprite" parent="."]
-position = Vector2( 512, 296 )
+position = Vector2( 640, 360 )
 scale = Vector2( 1.64062, 1.64062 )
 frames = SubResource( 110 )
 animation = "slime_loading"
-frame = 3
+frame = 5
 playing = true
 
 [node name="loading_text" type="Label" parent="."]
-margin_left = 256.0
-margin_top = 256.0
-margin_right = 768.0
-margin_bottom = 296.0
+margin_left = 384.0
+margin_top = 320.0
+margin_right = 896.0
+margin_bottom = 360.0
 text = "Example Text"
 align = 1
 valign = 1
