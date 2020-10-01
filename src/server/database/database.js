@@ -8,7 +8,7 @@ const init = require('./database-init');
 var Database = module.exports = function Database() {
 
   options.database = 'room';
-  options.connectionLimit = 10;
+  options.connectionLimit = 20;
 
   this.pool = mysql.createPool(options);
   this.queryList(init);
@@ -35,8 +35,11 @@ Database.prototype.query = function(query) {
     this.pool.getConnection((err, connection) => {
       connection.query(query, function(err, result, fields) {
         err ? reject(err) : resolve(result[0]);
+        connection.release();
       });
     });
+  }).catch((err) => {
+    console.log(err)
   });
 }
 
@@ -53,4 +56,25 @@ Database.prototype.getUserInfo = function(username, password) {
 
 Database.prototype.usernameInUse = function(username) {
   return this.query(`SELECT * FROM users WHERE username = '${username}'`).then((result) => !!result);
+}
+
+Database.prototype.updateUserLocations = function(users) {
+  if (users && users.length) {
+    var xQuery = 'UPDATE users SET x = CASE id ';
+    var yQuery = 'UPDATE users SET y = CASE id ';
+    var localeQuery = 'UPDATE users SET locale = CASE id ';
+    var ids = '';
+    users.forEach((user) => {
+      if (ids) {
+        ids = ids + `,${user.id}`
+      } else {
+        ids = `(${user.id}`
+      }
+      xQuery += `WHEN ${user.id} THEN ${user.x !== null && user.x !== undefined ? user.x : 88}`
+      yQuery += `WHEN ${user.id} THEN ${user.y !== null && user.y !== undefined ? user.y : 88}`
+      localeQuery += `WHEN ${user.id} THEN ${user.locale || 0}`
+    });
+    ids = ids + ')';
+    return this.queryList([`${xQuery} END WHERE id in ${ids}`, `${yQuery} END WHERE id in ${ids}`, `${localeQuery} END WHERE id in ${ids}`]);
+  }
 }

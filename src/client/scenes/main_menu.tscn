@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scripts/main_menu.gd" type="Script" id=1]
+[ext_resource path="res://scripts/no_button.gd" type="Script" id=2]
 [ext_resource path="res://scenes/loading.tscn" type="PackedScene" id=3]
-[ext_resource path="res://scenes/download_dialog.tscn" type="PackedScene" id=4]
-[ext_resource path="res://scenes/restart_dialog.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scripts/yes_button.gd" type="Script" id=4]
+[ext_resource path="res://scripts/restart_ok_button.gd" type="Script" id=5]
+[ext_resource path="res://fonts/pixelmix_8.tres" type="DynamicFont" id=6]
 
 [node name="main_menu" type="Control"]
 anchor_right = 1.0
@@ -15,10 +17,10 @@ __meta__ = {
 
 [node name="build_version" type="Label" parent="."]
 self_modulate = Color( 1, 1, 1, 0.509804 )
-margin_left = 1112.0
-margin_top = 688.0
-margin_right = 1264.0
-margin_bottom = 712.0
+margin_left = 488.0
+margin_top = 344.0
+margin_right = 632.0
+margin_bottom = 358.0
 text = "0.0.0"
 align = 2
 valign = 1
@@ -28,27 +30,27 @@ __meta__ = {
 
 [node name="connect_menu" type="Control" parent="."]
 visible = false
-margin_right = 1024.0
-margin_bottom = 600.0
+margin_right = 640.0
+margin_bottom = 360.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="connect_button" type="Button" parent="connect_menu"]
-margin_left = 448.0
-margin_top = 368.0
-margin_right = 832.0
-margin_bottom = 424.0
+margin_left = 192.0
+margin_top = 192.0
+margin_right = 448.0
+margin_bottom = 224.0
 text = "Connect"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ip_input" type="LineEdit" parent="connect_menu"]
-margin_left = 448.0
-margin_top = 280.0
-margin_right = 832.0
-margin_bottom = 328.0
+margin_left = 192.0
+margin_top = 136.0
+margin_right = 448.0
+margin_bottom = 168.0
 align = 1
 clear_button_enabled = true
 placeholder_text = "IP Address"
@@ -60,9 +62,10 @@ __meta__ = {
 
 [node name="invalid_ip_text" type="Label" parent="connect_menu/ip_input"]
 visible = false
-margin_top = 48.0
-margin_right = 384.0
-margin_bottom = 79.0
+margin_left = -64.0
+margin_top = 32.0
+margin_right = 320.0
+margin_bottom = 56.0
 custom_colors/font_color = Color( 1, 0, 0, 1 )
 custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
 custom_colors/font_color_shadow = Color( 0.117647, 0.0313726, 0.0313726, 1 )
@@ -75,37 +78,37 @@ __meta__ = {
 
 [node name="server_down_text" type="Label" parent="connect_menu"]
 visible = false
-margin_left = 448.0
-margin_top = 432.0
-margin_right = 832.0
-margin_bottom = 448.0
+margin_left = 128.0
+margin_top = 232.0
+margin_right = 512.0
+margin_bottom = 248.0
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "Server Unavailable"
 align = 1
 
 [node name="login_menu" type="Control" parent="."]
 visible = false
-margin_right = 1280.0
-margin_bottom = 720.0
+margin_right = 640.0
+margin_bottom = 360.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="play_button" type="Button" parent="login_menu"]
-margin_left = 448.0
-margin_top = 432.0
-margin_right = 832.0
-margin_bottom = 488.0
+margin_left = 192.0
+margin_top = 232.0
+margin_right = 448.0
+margin_bottom = 264.0
 text = "Play"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="username_input" type="LineEdit" parent="login_menu"]
-margin_left = 448.0
-margin_top = 256.0
-margin_right = 832.0
-margin_bottom = 304.0
+margin_left = 192.0
+margin_top = 112.0
+margin_right = 448.0
+margin_bottom = 144.0
 align = 1
 placeholder_text = "Username"
 __meta__ = {
@@ -114,9 +117,9 @@ __meta__ = {
 
 [node name="invalid_username_text" type="Label" parent="login_menu/username_input"]
 visible = false
-margin_top = 48.0
-margin_right = 384.0
-margin_bottom = 79.0
+margin_top = 32.0
+margin_right = 256.0
+margin_bottom = 48.0
 custom_colors/font_color = Color( 1, 0, 0, 1 )
 custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
 custom_colors/font_color_shadow = Color( 0.117647, 0.0313726, 0.0313726, 1 )
@@ -128,10 +131,10 @@ __meta__ = {
 }
 
 [node name="password_input" type="LineEdit" parent="login_menu"]
-margin_left = 448.0
-margin_top = 336.0
-margin_right = 832.0
-margin_bottom = 384.0
+margin_left = 192.0
+margin_top = 168.0
+margin_right = 448.0
+margin_bottom = 200.0
 align = 1
 secret = true
 placeholder_text = "Password"
@@ -141,9 +144,9 @@ __meta__ = {
 
 [node name="invalid_password_text" type="Label" parent="login_menu/password_input"]
 visible = false
-margin_top = 48.0
-margin_right = 384.0
-margin_bottom = 79.0
+margin_top = 32.0
+margin_right = 256.0
+margin_bottom = 48.0
 custom_colors/font_color = Color( 1, 0, 0, 1 )
 custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
 custom_colors/font_color_shadow = Color( 0.117647, 0.0313726, 0.0313726, 1 )
@@ -157,8 +160,9 @@ __meta__ = {
 [node name="create_account_button" type="LinkButton" parent="login_menu"]
 margin_left = 8.0
 margin_top = 8.0
-margin_right = 105.0
-margin_bottom = 22.0
+margin_right = 96.0
+margin_bottom = 16.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "Create Account"
 underline = 1
 __meta__ = {
@@ -166,10 +170,10 @@ __meta__ = {
 }
 
 [node name="connected_to_text" type="Label" parent="login_menu"]
-margin_left = 816.0
+margin_left = 176.0
 margin_top = 8.0
-margin_right = 1272.0
-margin_bottom = 22.0
+margin_right = 632.0
+margin_bottom = 16.0
 text = "Connected to server"
 align = 2
 __meta__ = {
@@ -177,31 +181,35 @@ __meta__ = {
 }
 
 [node name="change_connection" type="LinkButton" parent="login_menu/connected_to_text"]
-margin_left = 408.0
+margin_left = 416.0
 margin_top = 16.0
-margin_right = 456.0
-margin_bottom = 30.0
+margin_right = 457.0
+margin_bottom = 24.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "Change"
 underline = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="account_succesful" type="Label" parent="login_menu"]
 visible = false
-margin_left = 320.0
-margin_top = 168.0
-margin_right = 704.0
-margin_bottom = 182.0
+margin_left = 128.0
+margin_top = 96.0
+margin_right = 512.0
+margin_bottom = 110.0
 text = "Account created succesfully!"
 align = 1
 
 [node name="login_failed" type="Label" parent="login_menu"]
 visible = false
-margin_left = 320.0
-margin_top = 408.0
-margin_right = 704.0
-margin_bottom = 439.0
+margin_left = 128.0
+margin_top = 264.0
+margin_right = 512.0
+margin_bottom = 288.0
 custom_colors/font_color = Color( 1, 0, 0, 1 )
 custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
-custom_colors/font_color_shadow = Color( 0.117647, 0.0313726, 0.0313726, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "login failed. Please try again."
 align = 1
 valign = 1
@@ -212,42 +220,31 @@ __meta__ = {
 [node name="loading" parent="." instance=ExtResource( 3 )]
 visible = false
 
-[node name="download_dialog" parent="loading" instance=ExtResource( 4 )]
-margin_left = 448.0
-margin_top = 288.0
-margin_right = 832.0
-margin_bottom = 432.0
-
-[node name="restart_dialog" parent="loading" instance=ExtResource( 5 )]
-margin_left = 448.0
-margin_top = 288.0
-margin_right = 832.0
-margin_bottom = 432.0
-
 [node name="create_account" type="PopupDialog" parent="loading"]
-margin_left = 416.0
-margin_top = 192.0
-margin_right = 864.0
-margin_bottom = 520.0
+margin_left = 152.0
+margin_top = 56.0
+margin_right = 488.0
+margin_bottom = 288.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="input_background" type="ColorRect" parent="loading/create_account"]
 margin_left = 16.0
-margin_top = 56.0
-margin_right = 432.0
-margin_bottom = 224.0
+margin_top = 48.0
+margin_right = 320.0
+margin_bottom = 168.0
 color = Color( 0.337255, 0.364706, 0.392157, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="create_username_input" type="LineEdit" parent="loading/create_account"]
-margin_left = 32.0
-margin_top = 80.0
-margin_right = 416.0
-margin_bottom = 128.0
+margin_left = 40.0
+margin_top = 64.0
+margin_right = 296.0
+margin_bottom = 96.0
+custom_fonts/font = ExtResource( 6 )
 align = 1
 placeholder_text = "Username"
 __meta__ = {
@@ -255,10 +252,10 @@ __meta__ = {
 }
 
 [node name="create_password_input" type="LineEdit" parent="loading/create_account"]
-margin_left = 32.0
-margin_top = 152.0
-margin_right = 416.0
-margin_bottom = 200.0
+margin_left = 40.0
+margin_top = 120.0
+margin_right = 296.0
+margin_bottom = 152.0
 align = 1
 secret = true
 placeholder_text = "Password"
@@ -268,25 +265,26 @@ __meta__ = {
 
 [node name="account_unsuccesful" type="Label" parent="loading/create_account"]
 visible = false
-margin_left = 32.0
-margin_top = 232.0
-margin_right = 416.0
-margin_bottom = 263.0
+margin_left = 8.0
+margin_top = 168.0
+margin_right = 328.0
+margin_bottom = 192.0
 custom_colors/font_color = Color( 1, 0, 0, 1 )
 custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
-custom_colors/font_color_shadow = Color( 0.117647, 0.0313726, 0.0313726, 1 )
 text = "Username already in use, please change it and try again."
 align = 1
 valign = 1
+autowrap = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="create_account_text" type="Label" parent="loading/create_account"]
-margin_left = 160.0
+margin_left = 104.0
 margin_top = 16.0
-margin_right = 296.0
+margin_right = 232.0
 margin_bottom = 40.0
+custom_fonts/font = ExtResource( 6 )
 text = "Create Account"
 align = 1
 valign = 1
@@ -295,22 +293,106 @@ __meta__ = {
 }
 
 [node name="create_button" type="Button" parent="loading/create_account"]
-margin_left = 168.0
-margin_top = 264.0
-margin_right = 280.0
-margin_bottom = 296.0
+margin_left = 128.0
+margin_top = 192.0
+margin_right = 208.0
+margin_bottom = 216.0
 text = "Create"
 
 [node name="close_create_account" type="LinkButton" parent="loading/create_account"]
-margin_left = 424.0
+margin_left = 312.0
 margin_top = 16.0
-margin_right = 432.0
-margin_bottom = 40.0
+margin_right = 320.0
+margin_bottom = 30.0
 text = "x"
 underline = 2
+
+[node name="restart_dialog" type="PopupDialog" parent="loading"]
+margin_left = 152.0
+margin_top = 112.0
+margin_right = 488.0
+margin_bottom = 240.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="complete_text" type="Label" parent="loading/restart_dialog"]
+margin_left = 56.0
+margin_top = 16.0
+margin_right = 280.0
+margin_bottom = 47.0
+text = "Download Complete!
+"
+align = 1
+
+[node name="please_restart_text" type="Label" parent="loading/restart_dialog"]
+margin_left = 56.0
+margin_top = 48.0
+margin_right = 280.0
+margin_bottom = 79.0
+text = "Please restart the client"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ok_button" type="Button" parent="loading/restart_dialog"]
+margin_left = 136.0
+margin_top = 88.0
+margin_right = 200.0
+margin_bottom = 112.0
+text = "OK"
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="download_dialog" type="PopupDialog" parent="loading"]
+margin_left = 152.0
+margin_top = 112.0
+margin_right = 488.0
+margin_bottom = 240.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="version_wrong_text" type="Label" parent="loading/download_dialog"]
+margin_left = 56.0
+margin_top = 16.0
+margin_right = 280.0
+margin_bottom = 47.0
+text = "Your client version is out of date!
+"
+align = 1
+
+[node name="download_latest_text" type="Label" parent="loading/download_dialog"]
+margin_left = 56.0
+margin_top = 48.0
+margin_right = 280.0
+margin_bottom = 79.0
+text = "Download Latest?"
+align = 1
+valign = 1
+
+[node name="no_button" type="Button" parent="loading/download_dialog"]
+margin_left = 72.0
+margin_top = 88.0
+margin_right = 136.0
+margin_bottom = 112.0
+text = "No"
+script = ExtResource( 2 )
+
+[node name="yes_button" type="Button" parent="loading/download_dialog"]
+margin_left = 200.0
+margin_top = 88.0
+margin_right = 264.0
+margin_bottom = 112.0
+text = "Yes"
+script = ExtResource( 4 )
 [connection signal="pressed" from="connect_menu/connect_button" to="." method="connectToServer"]
-[connection signal="pressed" from="login_menu/play_button" to="." method="play"]
-[connection signal="text_entered" from="login_menu/username_input" to="." method="play"]
+[connection signal="pressed" from="login_menu/play_button" to="." method="play" binds= [ true ]]
+[connection signal="text_entered" from="login_menu/username_input" to="." method="play" binds= [ true ]]
 [connection signal="text_entered" from="login_menu/password_input" to="." method="play"]
 [connection signal="pressed" from="login_menu/create_account_button" to="." method="openCreateAccountDialog"]
 [connection signal="pressed" from="login_menu/connected_to_text/change_connection" to="." method="switchToConnect"]

@@ -16,11 +16,10 @@ var Peer = module.exports = function Peer(id, address, port) {
   this.pendingMessages = {};    // will be considered to send on next flush
   this.messageIdsBySeq = {};    // used to ack messages when packet is acked
   this.lastHandshake = timing.hrtime(); // time of last handshake
+  this.userId = null; // user id recieving from peer
   
   this.EventEmitter = new EventEmitter();
 };
-
-Peer.prototype.constructor = Peer;
 
 Peer.prototype.send = function(msg) {
   msg.id = this.nextMessageId++;
@@ -34,7 +33,11 @@ Peer.prototype.recvMessage = function(msg) {
   }
 };
 
-Peer.prototype.recvPacket = function(seq, acks) {
+Peer.prototype.recvPacket = function(seq, acks, userId) {
+  if (this.userId === null) {
+    this.userId = userId;
+    this.emit('userConnected');
+  }
   this.lastHandshake = timing.hrtime();
   this.seqsReceived[seq] = 1;
   if (utils.sequenceGreaterThan(seq, this.seq)) {

@@ -59,7 +59,9 @@ exports.encodeHeader = function(seq, peer) {
       acksField.set(j, 1);
     }
   }
-  return Buffer.concat([head, acksField.buffer])
+  var userId = new Buffer.alloc(4);
+  userId.writeUInt32BE(0, 0); // UserId 0 for server
+  return Buffer.concat([head, acksField.buffer, userId])
 };
 
 exports.decodeHeader = function(buf) {
@@ -73,5 +75,11 @@ exports.decodeHeader = function(buf) {
   for (var i = ack - 1, j = 0; j < ACKS; i--, j++) {
     if (acksField.get(j)) acks[j + 1] = i;
   }
-  return [seq, acks, buf.slice(acksEnd)];
+  var userId = buf.readUInt32BE(12);
+  return {
+    seq: seq,
+    acks: acks,
+    userId: userId,
+    messagesBuf: buf.slice(acksEnd + 4)
+  }
 };

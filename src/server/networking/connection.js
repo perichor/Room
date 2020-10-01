@@ -6,7 +6,6 @@ var hrtime = require('./timing').hrtime;
 var messaging = require('./messaging');
 var utils = require('./utils');
 
-var RATE = 15;   // packet sending loop interval delay (ms)
 var PMAX = 1200; // maximum packet size (bytes). 1400 is known as common MTU
 
 var DISCONNECT_TIMEOUT = 5000; // mills since last packet to disconnect
@@ -15,7 +14,6 @@ var Connection = module.exports = function Connection() {
   this.socket = dgram.createSocket('udp4');
   this.peers = {};
 
-  this.socket.on('close', function() { clearInterval(this.peerUpdateInterval); }.bind(this));
   this.socket.on('error', function(e) { console.log('Network socket error!'); throw e; });
 
   this.socket.on('message', function(data, remote) {
@@ -30,75 +28,72 @@ var Connection = module.exports = function Connection() {
     }
 
     // Decode packet
-    var decoded = messaging.decodeHeader(data);
-    var seq = decoded[0];
-    var acks = decoded[1];
-    var messagesBuf = decoded[2];
-    peer.recvPacket(seq, acks);
-    if (peer.seq === seq) { // Only recieve packet messages if packet is latest
-      while (messagesBuf.length) {
-        var parts = messaging.decodeMessage(messagesBuf);
+    var header = messaging.decodeHeader(data);
+    peer.recvPacket(header.seq, header.acks, header.userId);
+    if (peer.seq === header.seq) { // Only recieve packet messages if packet is latest
+      while (header.messagesBuf.length) {
+        var parts = messaging.decodeMessage(header.messagesBuf);
         if (parts && parts.length) {
           var msg = parts[0];
-          messagesBuf = messagesBuf.slice(parts[1]);
+          header.messagesBuf = header.messagesBuf.slice(parts[1]);
           peer.recvMessage(msg);
         } else {
-          messagesBuf = false;
+          header.messagesBuf = false;
         }
       } 
     }
   }.bind(this));
-
-  this.peerUpdateInterval = setInterval(function() {
-    // Generate and send packets to all peers on interval RATE
-    var curtime = hrtime();
-    for (var p in this.peers) {
-      var peer = this.peers[p];
-      var msg;
-
-      if ((curtime - peer.lastHandshake) > DISCONNECT_TIMEOUT) {
-        delete this.peers[p];
-        peer.disconnect();
-      }
-
-      var seq = peer.seqLocal++;
-      var headerBuf = messaging.encodeHeader(seq, peer);
-
-      var messagesForThisPacket = {};
-      for (var m in peer.pendingMessages) {
-        msg = peer.pendingMessages[m];
-
-        if (!msg.sent) {
-          messagesForThisPacket[msg.id] = msg;
-        }
-      }
-
-      // collect buffers for this packet
-      var bufs = [headerBuf];
-      var messageIds = [];
-      var size = headerBuf.length;
-      for (var k in messagesForThisPacket) {
-        msg = messagesForThisPacket[k];
-        var msgBufs = messaging.encodeMessage(msg);
-        for (var i = 0; i < msgBufs.length; ++i) {
-          size += msgBufs[i].length;
-        }
-        if (size > PMAX) {
-          // can't fit message to this packet
-          break;
-        }
-        msg.sent = curtime;
-        bufs.push(msgBufs);
-        messageIds.push(msg.id);
-      }
-      peer.messageIdsBySeq[seq] = messageIds;
-      this.rawSend(Buffer.concat(bufs), peer);
-    }
-  }.bind(this), RATE);
 };
 
 Connection.prototype = new EventEmitter();
 Connection.prototype.constructor = Connection;
+
+Connection.prototype.sendPackets = function() {
+  // Build packets from queued messages and send to all peers
+  var curtime = hrtime();
+  for (var p in this.peers) {
+    var peer = this.peers[p];
+    var msg;
+
+    if ((curtime - peer.lastHandshake) > DISCONNECT_TIMEOUT) {
+      delete this.peers[p];
+      peer.disconnect();
+    }
+
+    var seq = peer.seqLocal++;
+    var headerBuf = messaging.encodeHeader(seq, peer);
+
+    var messagesForThisPacket = {};
+    for (var m in peer.pendingMessages) {
+      msg = peer.pendingMessages[m];
+
+      if (!msg.sent) {
+        messagesForThisPacket[msg.id] = msg;
+      }
+    }
+
+    // collect buffers for this packet
+    var bufs = [headerBuf];
+    var messageIds = [];
+    var size = headerBuf.length;
+    for (var k in messagesForThisPacket) {
+      msg = messagesForThisPacket[k];
+      var msgBufs = messaging.encodeMessage(msg);
+      for (var i = 0; i < msgBufs.length; ++i) {
+        size += msgBufs[i].length;
+      }
+      if (size > PMAX) {
+        // can't fit message to this packet
+        break;
+      }
+      msg.sent = curtime;
+      bufs.push(msgBufs);
+      messageIds.push(msg.id);
+    }
+    peer.messageIdsBySeq[seq] = messageIds;
+    this.rawSend(Buffer.concat(bufs), peer);
+  }
+}
 
 Connection.prototype.close = function() {
   this.socket.close();

@@ -55,7 +55,12 @@ func _on_loaded(result, _headers, url):
 		loading.hide();
 		result = result.get_string_from_ascii();
 		if (result.begins_with('success')):
-			global.userId = int(result.right(8));
+			var initialStatus = JSON.parse(result.right(8)).result;
+			global.userId = initialStatus.id;
+			if (!initialStatus.x || !initialStatus.y):
+				initialStatus.x = global.defaultPosition.x;
+				initialStatus.y = global.defaultPosition.y;
+			global.initialPosition = Vector2(initialStatus.x, initialStatus.y);
 			startGame();
 		elif (result.begins_with('failure')):
 			loginFailed.text = result.right(8);
@@ -84,27 +89,27 @@ func _on_no_response(url):
 	
 func checkVersion():
 	loading.showWithText('Verifying Server Version');
-	http.getRequest(global.SERVER_HOST, global.FILE_PORT, '/version', true, false);
+	http.getRequest(global.SERVER_HOST, global.HTTP_PORT, '/version', true, false);
 
 func login():
 	loading.showWithText('Logging in...');
-	http.postRequest(global.SERVER_HOST, global.FILE_PORT, '/login', { 'username': usernameInput.text, 'password' : passwordInput.text.sha256_text() }, true, false);
+	http.postRequest(global.SERVER_HOST, global.HTTP_PORT, '/login', { 'username': usernameInput.text, 'password' : passwordInput.text.sha256_text() }, true, false);
 	
 func createAccount():
 	createAccountDialog.hide();
 	accountUnsuccessful.hide();
 	loading.showWithText('Creating Account');
-	http.postRequest(global.SERVER_HOST, global.FILE_PORT, '/create-account', { 'username': createUsername.text, 'password' : createPassword.text.sha256_text() }, true, false);
+	http.postRequest(global.SERVER_HOST, global.HTTP_PORT, '/create-account', { 'username': createUsername.text, 'password' : createPassword.text.sha256_text() }, true, false);
 
 func downloadUpdate():
 	loading.showWithText('Downloading Update...');
-	http.getRequest(global.SERVER_HOST, global.FILE_PORT, '/download', true, true);
+	http.getRequest(global.SERVER_HOST, global.HTTP_PORT, '/download', true, true);
 	
 func openCreateAccountDialog():
 	createAccountDialog.show();
 	loading.show();
 
-func play():
+func play(_text):
 	serverUnavailable.hide();
 	loginFailed.hide();
 	hideErrors();

@@ -2,41 +2,44 @@ extends KinematicBody2D
 
 const DISCONNECT_TIMER: int = 5000;
 
-var remotePlayerId: int;
+var remoteUserId: int;
 var localPlayer: bool = true;
 var score: int = 0;
 
-var speed: int = 10;
+const ACCELERATION: int = 4200;
+const MAX_SPEED: int = 700;
+const FRICTION = 7000;
 
 var vel: Vector2 = Vector2();
 onready var sprite: Sprite = get_node('sprite');
 onready var player: KinematicBody2D = self;
-onready var parent: Node = get_parent();
+onready var scene: Node = get_parent().get_parent();
 
-func _physics_process(_delta):
+func _ready():
+	if (localPlayer && global.initialPosition):
+			player.position = global.initialPosition; 
+
+func _physics_process(delta):
 	if (localPlayer):
 		player.position = Vector2(int(round(player.position[0])), int(round(player.position[1])));
 		
-		vel.x = 0;
-		vel.y = 0;
+		var input_vector = Vector2.ZERO;
+		input_vector.x = Input.get_action_strength('move_right') - Input.get_action_strength('move_left');
+		input_vector.y = Input.get_action_strength('move_down') - Input.get_action_strength('move_up');
+		input_vector = input_vector.normalized();
 		
-		if (Input.is_action_pressed('move_left')):
-			vel.x -= speed;
-		if (Input.is_action_pressed('move_right')):
-			vel.x += speed;
-		if (Input.is_action_pressed('move_up')):
-			vel.y -= speed;
-		if (Input.is_action_pressed('move_down')):
-			vel.y += speed;
-			
-	# warning-ignore:return_value_discarded
-		move_and_collide(vel)
+		if (input_vector != Vector2.ZERO):
+			vel = vel.move_toward(input_vector * MAX_SPEED, ACCELERATION * delta);
+		else:
+			vel = vel.move_toward(Vector2.ZERO, FRICTION * delta);
+
+		vel = move_and_slide(vel)
 	else:
-		var playerStatus = parent.getPlayerStatusById(remotePlayerId);
+		var playerStatus = scene.getPlayerStatusById(remoteUserId);
 		player.position = Vector2(playerStatus.x, playerStatus.y);
 		if (OS.get_ticks_msec() - playerStatus.lastHandshakeTime > DISCONNECT_TIMER):
-			parent.remove_child(player);
+			queue_free();
 	
-func setRemotePlayerId(id: int):
-	remotePlayerId = id;
+func setRemoteUserId(id: int):
+	remoteUserId = id;
 	localPlayer = false;

@@ -4,26 +4,25 @@ const path = require('path');
 const readline = require('readline');
 const express = require('express');
 
-var privateKey  = fs.readFileSync(__dirname + '/sslcert/selfsigned.key');
-var certificate = fs.readFileSync(__dirname + '/sslcert/selfsigned.crt');
-
-var db = require('./database');
+const privateKey  = fs.readFileSync(__dirname + '/sslcert/selfsigned.key');
+const certificate = fs.readFileSync(__dirname + '/sslcert/selfsigned.crt');
 
 const metadata = require('../../package.json');
 const utils = require('./utils.js');
 
 const PORT = process.argv[2] | 4243;
 
-const server = express();
+var db = require('./database');
 
+var loggedIn = {};
+
+const server = express();
 server.use(
   express.urlencoded({
     extended: true
   })
 )
-
 server.use(express.json())
-
 server.get('/download', (req, res) => {
   var filePath = path.join(__dirname, '/dist/Room.zip');
   var file = fs.statSync(filePath);
@@ -34,13 +33,10 @@ server.get('/download', (req, res) => {
   var readStream = fs.createReadStream(filePath);
   readStream.pipe(res);
 });
-
 server.get('/version', (req, res) => {
   res.writeHead(200);
   res.end(metadata.version);
 });
-
-
 server.post('/create-account', (req, res) => {
   var username = req.body.username;
   var password = req.body.password;
@@ -60,21 +56,22 @@ server.post('/create-account', (req, res) => {
     });
   }
 });
-
 server.post('/login', (req, res) => {
   var username = req.body.username;
   var password = req.body.password;
   db.getUserInfo(username, password).then((user) => {
     res.writeHead(200);
-    console.log(user.id)
     if (user) {
-      res.end('success: ' + user.id);
+      if (!loggedIn[user.id]) {
+        res.end('success:' + JSON.stringify(user));
+      } else {
+        res.end('failure:User already logged in.');
+      }
     } else {
       res.end('failure:Username or Password was incorrect. Please try again.');
     }
   });
 });
-
 var httpsServer = https.createServer({
     key: privateKey,
     cert: certificate,
@@ -84,6 +81,17 @@ var httpsServer = https.createServer({
 httpsServer.listen(PORT);
 console.log('HTTPS Server is Listening on port:', PORT, 'with client version:', metadata.version);
 
+process.on('message', (msg) => {
+  var parsed = msg.split(':');
+  if (parsed[0] === 'connect') {
+    loggedIn[parsed[1]] = true;
+  } else if (parsed[0] === 'disconnect') {
+    delete loggedIn[parsed[1]];
+    if (!loggedIn[parsed[1]]) {
+      console.log(`User ${parsed[1]} logged out`);
+    }
+  }
+});
 
 // catch kill from parent process
 process.on('SIGTERM', exitHandler.bind(null, { exit: true }));

@@ -1,14 +1,15 @@
 var networking = require('./networking');
 
-var PositionUpdate = exports.PositionUpdate = function (x, y) {
+// Recieves posit
+var PlayerUpdate = exports.PlayerUpdate = function (x, y) {
   this.x = x;
   this.y = y;
 };
 
-PositionUpdate.prototype = new networking.Message();
-PositionUpdate.prototype.typeid = 0;
+PlayerUpdate.prototype = new networking.Message();
+PlayerUpdate.prototype.typeid = 0;
 
-PositionUpdate.prototype.encode = function () {
+PlayerUpdate.prototype.encode = function () {
   if (!this._buffer) {
     var dataBuf = new Buffer.alloc(8);
     dataBuf.writeUInt32BE(this.x, 0);
@@ -18,26 +19,28 @@ PositionUpdate.prototype.encode = function () {
   return this._buffer;
 };
 
-PositionUpdate.decode = function (buf) {
+PlayerUpdate.decode = function (buf) {
   var x = buf.readUInt32BE(0);
   var y = buf.readUInt32BE(4);
-  return [new PositionUpdate(x, y), 8];
+  return [new PlayerUpdate(x, y), 8];
 };
 
 
-var PlayerUpdate = exports.PlayerUpdate = function (playerId, x, y) {
-  this.playerId = playerId;
+
+// Used to notify client of remote player status
+var RemotePlayerUpdate = exports.RemotePlayerUpdate = function (userId, x, y) {
+  this.userId = userId;
   this.x = x;
   this.y = y;
 };
 
-PlayerUpdate.prototype = new networking.Message();
-PlayerUpdate.prototype.typeid = 1;
+RemotePlayerUpdate.prototype = new networking.Message();
+RemotePlayerUpdate.prototype.typeid = 1;
 
-PlayerUpdate.prototype.encode = function () {
+RemotePlayerUpdate.prototype.encode = function () {
   if (!this._buffer) {
     var dataBuf = new Buffer.alloc(12);
-    dataBuf.writeUInt32BE(this.playerId, 0);
+    dataBuf.writeUInt32BE(this.userId, 0);
     dataBuf.writeUInt32BE(this.x, 4);
     dataBuf.writeUInt32BE(this.y, 8);
     this._buffer = dataBuf;
@@ -45,11 +48,11 @@ PlayerUpdate.prototype.encode = function () {
   return this._buffer;
 };
 
-PlayerUpdate.decode = function (buf) {
-  var playerId = buf.readUInt32BE(0);
+RemotePlayerUpdate.decode = function (buf) {
+  var userId = buf.readUInt32BE(0);
   var x = buf.readUInt32BE(4);
-  var y = buf.readUInt32BE(12);
-  return [new PlayerUpdate(playerId, x, y), 12];
+  var y = buf.readUInt32BE(8);
+  return [new RemotePlayerUpdate(userId, x, y), 12];
 };
 
 for (var k in exports) {

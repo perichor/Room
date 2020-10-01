@@ -2,36 +2,38 @@
 
 [ext_resource path="res://scripts/restart_ok_button.gd" type="Script" id=1]
 
-
 [node name="restart_dialog" type="PopupDialog"]
-margin_left = 320.0
-margin_top = 216.0
-margin_right = 704.0
-margin_bottom = 360.0
+margin_left = 152.0
+margin_top = 112.0
+margin_right = 488.0
+margin_bottom = 240.0
 
 [node name="complete_text" type="Label" parent="."]
-margin_left = 80.0
+margin_left = 56.0
 margin_top = 16.0
-margin_right = 304.0
+margin_right = 280.0
 margin_bottom = 47.0
 text = "Download Complete!
 "
 align = 1
 
 [node name="please_restart_text" type="Label" parent="."]
-margin_left = 80.0
-margin_top = 56.0
-margin_right = 304.0
-margin_bottom = 87.0
+margin_left = 56.0
+margin_top = 48.0
+margin_right = 280.0
+margin_bottom = 79.0
 text = "Please restart the client"
 align = 1
 valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ok_button" type="Button" parent="."]
-margin_left = 160.0
-margin_top = 96.0
-margin_right = 224.0
-margin_bottom = 120.0
+margin_left = 136.0
+margin_top = 88.0
+margin_right = 200.0
+margin_bottom = 112.0
 text = "OK"
 script = ExtResource( 1 )
 __meta__ = {

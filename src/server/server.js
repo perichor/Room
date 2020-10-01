@@ -2,86 +2,67 @@ const childProcess = require('child_process');
 var readline = require('readline');
 var networking = require('./networking');
 var protocol = require('./protocol');
+var gameState = require('./game-state');
+
+var db = require('./database');
+
+var TICK_RATE = 15;   // Server tick rate
+var DB_UPDATE_RATE = 4000;   // Update DB every n ticks (4000 = 1 minute)
 
 var PORT = process.argv[2] | 4242;
 
 var connection = networking.createConnection();
 
-connection.on('listening', function() {
-  console.log('Main Server is listening!', connection.listening);
+connection.on('listening', () => {
+  console.log(`Main Server is listening on port ${connection.listening.port}`);
 });
 
-var playerId = 0;
+connection.on('peer', (peer) => {
+  console.log(`New connection from ${peer.id}`);
 
-var players = {};
+  peer.on('userConnected', () => {
+    console.log(`Peer at ${peer.id} connected as user: ${peer.userId}`);
+    gameState.userConnected(peer);
+    httpsServer.send(`connect:${peer.userId}`)
+  });
 
-connection.on('peer', function(peer) {
-  console.log('New connection from ' + peer.id);
-  players[peer.id] = {
-    peer: peer,
-    id: playerId++,
-    x: 88,
-    y: 88
-  }
   peer.on('message', function(msg) {
-    if (msg instanceof protocol.PositionUpdate) {
-      if (players[peer.id]) {
-        players[peer.id].x = msg.x,
-        players[peer.id].y = msg.y
-        for (var i in players) {
-          var toPlayer = players[i];
-          for (var j in players) {
-            var fromPlayer = players[j];
-            if (toPlayer && fromPlayer && fromPlayer.peer.id !== toPlayer.peer.id) {
-              toPlayer.peer.send(new protocol.PlayerUpdate(fromPlayer.id, fromPlayer.x, fromPlayer.y));
-            }
-          }
-        }
-      }
+    if (msg instanceof protocol.PlayerUpdate) {
+      gameState.updateUserIfConnected(peer.userId, msg);
     }
   });
-  peer.on('disconnected', function() {
-    delete players[peer.id];
-    console.log(peer.id + ' has disconnected');
+
+  peer.on('disconnected', () => {
+    gameState.userDisconnected(peer.userId);
+    httpsServer.send(`disconnect:${peer.userId}`)
+    console.log(`${peer.id} has disconnected`);
   });
 });
+
+var tickCount = 0;
+
+var serverTickInterval = setInterval(() => {
+  gameState.forEveryUser((toUser) => {
+    gameState.forEveryUser((fromUser) => {
+      if (toUser && fromUser && fromUser.peer.id !== toUser.peer.id) {
+        toUser.peer.send(new protocol.RemotePlayerUpdate(fromUser.id, fromUser.x, fromUser.y));
+      }
+    });
+  });
+
+  if (tickCount === DB_UPDATE_RATE) { // Executes every DB_UPDATE_RATE ticks    
+    db.updateUserLocations(gameState.getAllUsersList());
+    tickCount = -1;
+  }
+
+  connection.sendPackets();
+  tickCount++;
+}, TICK_RATE);
+
 connection.listen(PORT);
 connection.socket.unref();
 
-var fileServer = childProcess.fork(__dirname + '/http-server.js');
-
-// const net = require('net');
-// var socketTCP = net.createServer();
-
-// socketTCP.listen(PORT, function() {
-//   console.log(`TCP Server On: ${PORT}`);
-// });
-
-// // When a client requests a connection with the server, the server creates a new
-// // socket dedicated to that client.
-// socketTCP.on('connection', function(socket) {
-//     console.log('A new connection has been established.');
-
-//     // Now that a TCP connection has been established, the server can send data to
-//     // the client by writing to its socket.
-//     socketTCP.write('Hello, client.');
-
-//     // The server can also receive data from the client by reading from its socket.
-//     socketTCP.on('data', function(chunk) {
-//         console.log(`Data received from client: ${chunk.toString()}`);
-//     });
-
-//     // When the client requests to end the TCP connection with the server, the server
-//     // ends the connection.
-//     socketTCP.on('end', function() {
-//         console.log('Closing connection with the client');
-//     });
-
-//     // Don't forget to catch error, for your own sake.
-//     socketTCP.on('error', function(err) {
-//         console.log(`Error: ${err}`);
-//     });
-// });
+var httpsServer = childProcess.fork(__dirname + '/https-server.js');
 
 // server command-line interface
 process.stdin.resume();
@@ -104,8 +85,10 @@ process.on('SIGINT', exitHandler.bind(null, { exit: true }));
 
 function exitHandler(options, err) {
   if (options.exit) process.exit();
+  clearInterval(serverTickInterval);
+  db.end();
   console.log('Server shut down properly.');
-  if (fileServer.kill()) {
+  if (httpsServer.kill()) {
     console.log('File server shut down properly.')
   }
 }
