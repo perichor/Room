@@ -26,10 +26,11 @@ func processPackets():
 			recievePacket();
 	
 
-func buildPlayerUpdatePacket(x, y):
+func buildPlayerUpdatePacket(x, y, state):
 	var message: PoolByteArray = PoolByteArray();
 	message.append_array(bitUtils.poolU32Bit(x));
 	message.append_array(bitUtils.poolU32Bit(y));
+	message.append_array(bitUtils.poolU16Bit(state));
 	udp.put_packet(buildUDPPacket(0, message));
 	
 func buildUDPPacket(messageType: int, message: PoolByteArray):
@@ -50,7 +51,8 @@ func recieveRemotePlayerUpdate(message: PoolByteArray):
 	var userId: int = bitUtils.readU32BitInt(message, 0);
 	var x: int = bitUtils.readU32BitInt(message, 4);
 	var y: int = bitUtils.readU32BitInt(message, 8);
-	emit_signal('playerUpdate', userId, x, y)
+	var state = bitUtils.readU16BitInt(message, 12);
+	emit_signal('playerUpdate', userId, x, y, state)
 
 func recievePacket():
 	var packet: PoolByteArray = udp.get_packet();
@@ -69,9 +71,9 @@ func recievePacket():
 					var packetMessageType: int = bitUtils.readU8BitInt(messagesBuffer, 0);
 	#				var packetMessageId: int = readU32BitInt(messagesBuffer, 1);
 					if (packetMessageType == 1):
-						recieveRemotePlayerUpdate(messagesBuffer.subarray(5, 16));
-						if (messagesBuffer.size() > 17):
-							messagesBuffer = messagesBuffer.subarray(17, messagesBuffer.size() - 1);
+						recieveRemotePlayerUpdate(messagesBuffer.subarray(5, 18));
+						if (messagesBuffer.size() > 19):
+							messagesBuffer = messagesBuffer.subarray(19, messagesBuffer.size() - 1);
 						else:
 							messagesBuffer = PoolByteArray();
 					else:

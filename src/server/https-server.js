@@ -59,7 +59,7 @@ server.post('/create-account', (req, res) => {
 server.post('/login', (req, res) => {
   var username = req.body.username;
   var password = req.body.password;
-  db.getUserInfo(username, password).then((user) => {
+  db.getUserFromLogin(username, password).then((user) => {
     res.writeHead(200);
     if (user) {
       if (!loggedIn[user.id]) {
@@ -72,6 +72,20 @@ server.post('/login', (req, res) => {
     }
   });
 });
+server.get('/get-user-info/:userId', (req, res) => {
+  var userId = req.params.userId;
+  db.getUserInfoFromId(userId).then((metaInfo) => {
+    res.writeHead(200);
+    if (metaInfo) {
+      metaInfo.userId = userId;
+      res.end('success:' + JSON.stringify(metaInfo));
+    } else {
+      res.end(`failure:User at userId ${userId} doesn't exist`);
+    }
+  });
+});
+
+
 var httpsServer = https.createServer({
     key: privateKey,
     cert: certificate,

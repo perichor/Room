@@ -1,35 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scripts/main_scene.gd" type="Script" id=1]
 [ext_resource path="res://scenes/player.tscn" type="PackedScene" id=2]
-[ext_resource path="res://sprites/jawbreaker_tiles.png" type="Texture" id=4]
+[ext_resource path="res://sprites/stone_brick.png" type="Texture" id=3]
 
-[sub_resource type="TileSet" id=1]
-0/name = "jawbreaker_tiles.png 0"
-0/texture = ExtResource( 4 )
-0/tex_offset = Vector2( 0, 0 )
-0/modulate = Color( 1, 1, 1, 1 )
-0/region = Rect2( 0, 0, 64, 64 )
-0/tile_mode = 1
-0/autotile/bitmask_mode = 0
-0/autotile/bitmask_flags = [  ]
-0/autotile/icon_coordinate = Vector2( 0, 0 )
-0/autotile/tile_size = Vector2( 32, 32 )
-0/autotile/spacing = 0
-0/autotile/occluder_map = [  ]
-0/autotile/navpoly_map = [  ]
-0/autotile/priority_map = [  ]
-0/autotile/z_index_map = [  ]
-0/occluder_offset = Vector2( 0, 0 )
-0/navigation_offset = Vector2( 0, 0 )
-0/shape_offset = Vector2( 0, 0 )
-0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
-0/shape_one_way = false
-0/shape_one_way_margin = 0.0
-0/shapes = [  ]
-0/z_index = 0
-
-[sub_resource type="RectangleShape2D" id=2]
+[sub_resource type="RectangleShape2D" id=1]
 
 [node name="main_scene" type="Node2D"]
 script = ExtResource( 1 )
@@ -37,72 +12,78 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="TileMap" type="TileMap" parent="."]
-tile_set = SubResource( 1 )
-format = 1
+[node name="floor" type="Sprite" parent="."]
+position = Vector2( 640, 360 )
+texture = ExtResource( 3 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 1300, 800 )
 
-[node name="YSort" type="YSort" parent="."]
+[node name="perspective" type="YSort" parent="."]
 
-[node name="floor" type="StaticBody2D" parent="YSort"]
-position = Vector2( 320, 370 )
-scale = Vector2( 32, 1 )
+[node name="floor" type="StaticBody2D" parent="perspective"]
+position = Vector2( 640, 730 )
+scale = Vector2( 64, 1 )
 __meta__ = {
 "_edit_group_": true,
 "_edit_lock_": true
 }
 
-[node name="collider" type="CollisionShape2D" parent="YSort/floor"]
-shape = SubResource( 2 )
+[node name="collider" type="CollisionShape2D" parent="perspective/floor"]
+shape = SubResource( 1 )
 
-[node name="ceiling" type="StaticBody2D" parent="YSort"]
-position = Vector2( 320, -10 )
-scale = Vector2( 32, 1.00244 )
+[node name="ceiling" type="StaticBody2D" parent="perspective"]
+position = Vector2( 640, -10 )
+scale = Vector2( 64, 1.002 )
 __meta__ = {
 "_edit_group_": true,
 "_edit_lock_": true
 }
 
-[node name="collider" type="CollisionShape2D" parent="YSort/ceiling"]
-shape = SubResource( 2 )
+[node name="collider" type="CollisionShape2D" parent="perspective/ceiling"]
+shape = SubResource( 1 )
 
-[node name="left_wall" type="StaticBody2D" parent="YSort"]
-position = Vector2( -12, 180 )
+[node name="left_wall" type="StaticBody2D" parent="perspective"]
+position = Vector2( -12, 360 )
 rotation = 1.5708
-scale = Vector2( 18, 1 )
+scale = Vector2( 36, 1 )
 __meta__ = {
 "_edit_group_": true,
 "_edit_lock_": true
 }
 
-[node name="collider" type="CollisionShape2D" parent="YSort/left_wall"]
+[node name="collider" type="CollisionShape2D" parent="perspective/left_wall"]
 position = Vector2( 0, -2 )
-shape = SubResource( 2 )
+shape = SubResource( 1 )
 
-[node name="right_wall" type="StaticBody2D" parent="YSort"]
-position = Vector2( 650, 180 )
+[node name="right_wall" type="StaticBody2D" parent="perspective"]
+position = Vector2( 1290, 360 )
 rotation = 1.5708
-scale = Vector2( 18, 1 )
+scale = Vector2( 36, 1 )
 __meta__ = {
 "_edit_group_": true,
 "_edit_lock_": true
 }
 
-[node name="collider" type="CollisionShape2D" parent="YSort/right_wall"]
-shape = SubResource( 2 )
+[node name="collider" type="CollisionShape2D" parent="perspective/right_wall"]
+shape = SubResource( 1 )
 
-[node name="player" parent="YSort" instance=ExtResource( 2 )]
-position = Vector2( 77, 77 )
+[node name="player" parent="perspective" instance=ExtResource( 2 )]
+position = Vector2( 208, 144 )
 
-[node name="player_camera" type="Camera2D" parent="YSort/player"]
+[node name="player_camera" type="Camera2D" parent="perspective/player"]
+current = true
+limit_left = 0
+limit_top = 0
+limit_right = 1280
+limit_bottom = 720
+editor_draw_limits = true
+
+[node name="ColorRect" type="ColorRect" parent="perspective"]
 visible = false
-drag_margin_h_enabled = true
-drag_margin_v_enabled = true
-
-[node name="ColorRect" type="ColorRect" parent="YSort"]
-margin_left = 392.0
-margin_top = 168.0
-margin_right = 432.0
-margin_bottom = 208.0
+margin_left = 328.0
+margin_top = 160.0
+margin_right = 368.0
+margin_bottom = 200.0
 __meta__ = {
 "_edit_use_anchors_": false
 }

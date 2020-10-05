@@ -25,16 +25,16 @@ onready var createPassword: LineEdit = get_node('loading/create_account/create_p
 onready var accountUnsuccessful: Label = get_node('loading/create_account/account_unsuccesful');
 
 
-var http = preload('res://addons/http.gd').new();
+var httpClient = preload('res://addons/http.gd').new();
 var Unzip = preload('res://addons/unzip.gd').new();
 var buildsDontMatch: bool;
 
 func _ready():
 	ipInput.text = global.SERVER_HOST;
 	version.text = String(global.build_version);
-	http.connect('loading', self, '_on_loading');
-	http.connect('loaded', self, '_on_loaded');
-	http.connect('no_response', self, '_on_no_response');
+	httpClient.connect('loading', self, '_on_loading');
+	httpClient.connect('loaded', self, '_on_loaded');
+	httpClient.connect('no_response', self, '_on_no_response');
 	loading.showWithText('Connecting to server...')
 	connectToServer();
 
@@ -89,21 +89,21 @@ func _on_no_response(url):
 	
 func checkVersion():
 	loading.showWithText('Verifying Server Version');
-	http.getRequest(global.SERVER_HOST, global.HTTP_PORT, '/version', true, false);
+	httpClient.getRequest(global.SERVER_HOST, global.HTTP_PORT, '/version', true, false);
 
 func login():
 	loading.showWithText('Logging in...');
-	http.postRequest(global.SERVER_HOST, global.HTTP_PORT, '/login', { 'username': usernameInput.text, 'password' : passwordInput.text.sha256_text() }, true, false);
+	httpClient.postRequest(global.SERVER_HOST, global.HTTP_PORT, '/login', { 'username': usernameInput.text, 'password' : passwordInput.text.sha256_text() }, true, false);
 	
 func createAccount():
 	createAccountDialog.hide();
 	accountUnsuccessful.hide();
 	loading.showWithText('Creating Account');
-	http.postRequest(global.SERVER_HOST, global.HTTP_PORT, '/create-account', { 'username': createUsername.text, 'password' : createPassword.text.sha256_text() }, true, false);
+	httpClient.postRequest(global.SERVER_HOST, global.HTTP_PORT, '/create-account', { 'username': createUsername.text, 'password' : createPassword.text.sha256_text() }, true, false);
 
 func downloadUpdate():
 	loading.showWithText('Downloading Update...');
-	http.getRequest(global.SERVER_HOST, global.HTTP_PORT, '/download', true, true);
+	httpClient.getRequest(global.SERVER_HOST, global.HTTP_PORT, '/download', true, true);
 	
 func openCreateAccountDialog():
 	createAccountDialog.show();
@@ -117,6 +117,7 @@ func play(_text):
 		login();
 		
 func connectToServer():
+	invalidIp.hide();
 	var ipValid = ipInput.text.is_valid_ip_address() || ipInput.text == 'local' || ipInput.text == 'localhost';
 	if (!ipValid): invalidIp.show();
 	if (ipValid):

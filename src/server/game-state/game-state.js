@@ -21,6 +21,7 @@ GameState.prototype.updateUserIfConnected = function(userId, msg) {
   if (this.users[userId]) {
     this.users[userId].x = msg.x;
     this.users[userId].y = msg.y;
+    this.users[userId].state = msg.state;
   }
 }
 
@@ -30,6 +31,10 @@ GameState.prototype.forEveryUser = function(callback) {
       callback(this.users[id]);
     }
   }
+}
+
+GameState.prototype.getUser = function(id) {
+  return this.users[id];
 }
 
 GameState.prototype.getAllUsersList = function() {

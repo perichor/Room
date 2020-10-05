@@ -6,12 +6,13 @@ var initQueries = module.exports = [
   `CREATE SCHEMA IF NOT EXISTS room`,
   `USE room`,
   `CREATE TABLE IF NOT EXISTS users(
-      id int primary key auto_increment,
-      username varchar(30),
-      hashed_password varchar(64),
-      x int,
-      y int,
-      locale int
+    id int primary key auto_increment,
+    username varchar(30),
+    hashed_password varchar(64),
+    char_name varchar(30),
+    x int,
+    y int,
+    locale int
   )`
 ]
 

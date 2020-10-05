@@ -33,6 +33,7 @@ connection.on('peer', (peer) => {
   });
 
   peer.on('disconnected', () => {
+    db.updateUserLocations([gameState.getUser(peer.userId)]);
     gameState.userDisconnected(peer.userId);
     httpsServer.send(`disconnect:${peer.userId}`)
     console.log(`${peer.id} has disconnected`);
@@ -45,7 +46,7 @@ var serverTickInterval = setInterval(() => {
   gameState.forEveryUser((toUser) => {
     gameState.forEveryUser((fromUser) => {
       if (toUser && fromUser && fromUser.peer.id !== toUser.peer.id) {
-        toUser.peer.send(new protocol.RemotePlayerUpdate(fromUser.id, fromUser.x, fromUser.y));
+        toUser.peer.send(new protocol.RemotePlayerUpdate(fromUser.id, fromUser.x, fromUser.y, fromUser.state));
       }
     });
   });

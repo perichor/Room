@@ -45,13 +45,18 @@ Database.prototype.query = function(query) {
 
 
 Database.prototype.createAccount = function(username, password) {
-  return this.query(`INSERT INTO users(username, hashed_password)
-              VALUES ('${username}','${password}')`);
+  return this.query(`INSERT INTO users(username, hashed_password, char_name)
+                     VALUES ('${username}','${password}','${username}')`);
 }
 
-Database.prototype.getUserInfo = function(username, password) {
+Database.prototype.getUserFromLogin = function(username, password) {
   return this.query(`SELECT * FROM users 
                      WHERE username = '${username}' AND hashed_password = '${password}'`);
+}
+
+Database.prototype.getUserInfoFromId = function(userId) {
+  return this.query(`SELECT char_name FROM users 
+                     WHERE id = ${userId}`);
 }
 
 Database.prototype.usernameInUse = function(username) {
@@ -60,9 +65,9 @@ Database.prototype.usernameInUse = function(username) {
 
 Database.prototype.updateUserLocations = function(users) {
   if (users && users.length) {
-    var xQuery = 'UPDATE users SET x = CASE id ';
-    var yQuery = 'UPDATE users SET y = CASE id ';
-    var localeQuery = 'UPDATE users SET locale = CASE id ';
+    var xQuery = 'UPDATE users SET x = CASE id';
+    var yQuery = 'UPDATE users SET y = CASE id';
+    var localeQuery = 'UPDATE users SET locale = CASE id';
     var ids = '';
     users.forEach((user) => {
       if (ids) {
@@ -70,11 +75,11 @@ Database.prototype.updateUserLocations = function(users) {
       } else {
         ids = `(${user.id}`
       }
-      xQuery += `WHEN ${user.id} THEN ${user.x !== null && user.x !== undefined ? user.x : 88}`
-      yQuery += `WHEN ${user.id} THEN ${user.y !== null && user.y !== undefined ? user.y : 88}`
-      localeQuery += `WHEN ${user.id} THEN ${user.locale || 0}`
+      xQuery += ` WHEN ${user.id} THEN ${user.x !== null && user.x !== undefined ? user.x : 88}`
+      yQuery += ` WHEN ${user.id} THEN ${user.y !== null && user.y !== undefined ? user.y : 88}`
+      localeQuery += ` WHEN ${user.id} THEN ${user.locale || 0}`
     });
     ids = ids + ')';
-    return this.queryList([`${xQuery} END WHERE id in ${ids}`, `${yQuery} END WHERE id in ${ids}`, `${localeQuery} END WHERE id in ${ids}`]);
+    return this.queryList([`${xQuery} ELSE x END WHERE id in ${ids}`, `${yQuery} ELSE y END WHERE id in ${ids}`, `${localeQuery} ELSE locale END WHERE id in ${ids}`]);
   }
 }

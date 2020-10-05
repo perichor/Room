@@ -4,16 +4,20 @@ static func writeUTF8String(buffer: PoolByteArray, string: String):
 	buffer.append_array(string.to_utf8());
 static func readUTF8String(buffer: PoolByteArray):
 	return buffer.get_string_from_utf8();
-static func writeU8BitInteger(buffer: PoolByteArray, integer: int):
-	buffer.append(integer);
-static func writeU32BitInteger(buffer: PoolByteArray, integer: int):
-	buffer.append_array(poolU32Bit(integer));
 static func writeU64BitInteger(buffer: PoolByteArray, integer: int):
 	buffer.append_array(poolU64Bit(integer));
-static func readU32BitInt(pool: PoolByteArray, index: int):
-	return readPoolInt(pool.subarray(index, index + 3));
+static func writeU32BitInteger(buffer: PoolByteArray, integer: int):
+	buffer.append_array(poolU32Bit(integer));
+static func writeU16BitInteger(buffer: PoolByteArray, integer: int):
+	buffer.append_array(poolU16Bit(integer));
+static func writeU8BitInteger(buffer: PoolByteArray, integer: int):
+	buffer.append(integer);
 static func readU64BitInt(pool: PoolByteArray, index: int):
 	return readPoolInt(pool.subarray(index, index + 7));
+static func readU32BitInt(pool: PoolByteArray, index: int):
+	return readPoolInt(pool.subarray(index, index + 3));
+static func readU16BitInt(pool: PoolByteArray, index: int):
+	return readPoolInt(pool.subarray(index, index + 1));
 static func readU8BitInt(pool: PoolByteArray, index: int):
 	return readPoolInt(pool.subarray(index, index));
 static func readPoolInt(pool: PoolByteArray):
@@ -23,10 +27,12 @@ static func readPoolInt(pool: PoolByteArray):
 		integer = integer << 8;
 		integer += byteArray[i];
 	return integer;
-static func poolU32Bit(integer: int):
-	return poolUInt(integer, 32);
 static func poolU64Bit(integer: int):
 	return poolUInt(integer, 64);
+static func poolU32Bit(integer: int):
+	return poolUInt(integer, 32);
+static func poolU16Bit(integer: int):
+	return poolUInt(integer, 16);
 static func poolUInt(integer: int, bitSize: int):
 	var pool = PoolByteArray();
 	for i in range(bitSize - 8, -1, -8):

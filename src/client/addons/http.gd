@@ -6,9 +6,11 @@ func _init():
 	var arg_bytes_loaded = {"name":"bytes_loaded","type":TYPE_INT}
 	var arg_bytes_total = {"name":"bytes_total","type":TYPE_INT}
 	var arg_result = {"name":"result","type":TYPE_RAW_ARRAY}
-	add_user_signal("loading",[arg_bytes_loaded,arg_bytes_total])
-	add_user_signal("loaded",[arg_result])
-	add_user_signal("no_response")
+	var arg_headers = {"name":"responseHeaders","type":TYPE_DICTIONARY}
+	var arg_url = {"name":"url","type":TYPE_STRING}
+	add_user_signal("loading",[arg_bytes_loaded,arg_bytes_total,arg_url])
+	add_user_signal("loaded",[arg_result,arg_headers,arg_url])
+	add_user_signal("no_response", [arg_url])
 
 func getRequest(domain, port, url, ssl, showProgress):
 	if(t.is_active()):
