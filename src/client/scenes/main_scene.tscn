@@ -13,10 +13,10 @@ __meta__ = {
 }
 
 [node name="floor" type="Sprite" parent="."]
-position = Vector2( 640, 360 )
 texture = ExtResource( 3 )
+centered = false
 region_enabled = true
-region_rect = Rect2( 0, 0, 1300, 800 )
+region_rect = Rect2( 0, 0, 1280, 720 )
 
 [node name="perspective" type="YSort" parent="."]
 
@@ -77,13 +77,3 @@ limit_top = 0
 limit_right = 1280
 limit_bottom = 720
 editor_draw_limits = true
-
-[node name="ColorRect" type="ColorRect" parent="perspective"]
-visible = false
-margin_left = 328.0
-margin_top = 160.0
-margin_right = 368.0
-margin_bottom = 200.0
-__meta__ = {
-"_edit_use_anchors_": false
-}

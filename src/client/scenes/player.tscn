@@ -1,15 +1,18 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://sprites/Action RPG Resources/Player/Player.png" type="Texture" id=1]
 [ext_resource path="res://scripts/player.gd" type="Script" id=2]
+[ext_resource path="res://sprites/player.png" type="Texture" id=3]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 3.31248
-height = 2.0
+height = 10.25
 
 [sub_resource type="Animation" id=2]
 resource_name = "AttackDown"
-length = 0.4
+length = 0.25
+loop = true
+step = 0.05
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:frame")
 tracks/0/interp = 1
@@ -17,7 +20,7 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"times": PoolRealArray( 0, 0.05, 0.1, 0.15 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 1,
 "values": [ 36, 37, 38, 39 ]
@@ -29,7 +32,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.4 ),
+"times": PoolRealArray( 0.25 ),
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
@@ -39,7 +42,8 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id=3]
 resource_name = "AttackLeft"
-length = 0.4
+length = 0.25
+step = 0.05
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:frame")
 tracks/0/interp = 1
@@ -47,7 +51,7 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"times": PoolRealArray( 0, 0.05, 0.1, 0.15 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 1,
 "values": [ 32, 33, 34, 35 ]
@@ -59,7 +63,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.4 ),
+"times": PoolRealArray( 0.25 ),
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
@@ -69,7 +73,8 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id=4]
 resource_name = "AttackRight"
-length = 0.4
+length = 0.25
+step = 0.05
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:frame")
 tracks/0/interp = 1
@@ -77,7 +82,7 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"times": PoolRealArray( 0, 0.05, 0.1, 0.15 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 1,
 "values": [ 24, 25, 26, 27 ]
@@ -89,7 +94,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.4 ),
+"times": PoolRealArray( 0.25 ),
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
@@ -99,7 +104,8 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id=5]
 resource_name = "AttackUp"
-length = 0.4
+length = 0.25
+step = 0.05
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:frame")
 tracks/0/interp = 1
@@ -107,7 +113,7 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"times": PoolRealArray( 0, 0.05, 0.1, 0.15 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 1,
 "values": [ 28, 29, 30, 31 ]
@@ -119,7 +125,7 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.4 ),
+"times": PoolRealArray( 0.25 ),
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
@@ -128,6 +134,131 @@ tracks/1/keys = {
 }
 
 [sub_resource type="Animation" id=6]
+resource_name = "DodgeDown"
+length = 0.0666667
+loop = true
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.0166667, 0.05 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ 19, 20, 21 ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.0666667 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "on_dodge_animation_finished"
+} ]
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "DodgeLeft"
+length = 0.0666667
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.0166667, 0.05 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ 13, 14, 15 ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.0666667 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "on_dodge_animation_finished"
+} ]
+}
+
+[sub_resource type="Animation" id=8]
+resource_name = "DodgeRight"
+length = 0.0666667
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.0166667, 0.05 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ 4, 5, 0 ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.0666667 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "on_dodge_animation_finished"
+} ]
+}
+
+[sub_resource type="Animation" id=9]
+resource_name = "DodgeUp"
+length = 0.0666667
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/path = NodePath("sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.0166667, 0.05 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ 7, 8, 9 ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.0666667 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "on_dodge_animation_finished"
+} ]
+}
+
+[sub_resource type="Animation" id=10]
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:frame")
@@ -142,7 +273,7 @@ tracks/0/keys = {
 "values": [ 18 ]
 }
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=11]
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:frame")
@@ -157,7 +288,7 @@ tracks/0/keys = {
 "values": [ 12 ]
 }
 
-[sub_resource type="Animation" id=8]
+[sub_resource type="Animation" id=12]
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:frame")
@@ -172,7 +303,7 @@ tracks/0/keys = {
 "values": [ 3 ]
 }
 
-[sub_resource type="Animation" id=9]
+[sub_resource type="Animation" id=13]
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("sprite:frame")
@@ -187,7 +318,7 @@ tracks/0/keys = {
 "values": [ 6 ]
 }
 
-[sub_resource type="Animation" id=10]
+[sub_resource type="Animation" id=14]
 length = 0.6
 loop = true
 tracks/0/type = "value"
@@ -203,7 +334,7 @@ tracks/0/keys = {
 "values": [ 19, 20, 21, 22, 23, 18 ]
 }
 
-[sub_resource type="Animation" id=11]
+[sub_resource type="Animation" id=15]
 length = 0.6
 loop = true
 tracks/0/type = "value"
@@ -219,7 +350,7 @@ tracks/0/keys = {
 "values": [ 13, 14, 15, 16, 17, 12 ]
 }
 
-[sub_resource type="Animation" id=12]
+[sub_resource type="Animation" id=16]
 length = 0.6
 loop = true
 tracks/0/type = "value"
@@ -235,7 +366,7 @@ tracks/0/keys = {
 "values": [ 1, 2, 3, 4, 5, 0 ]
 }
 
-[sub_resource type="Animation" id=13]
+[sub_resource type="Animation" id=17]
 length = 0.6
 loop = true
 tracks/0/type = "value"
@@ -255,8 +386,15 @@ tracks/0/keys = {
 script = ExtResource( 2 )
 
 [node name="sprite" type="Sprite" parent="."]
-position = Vector2( 1, -9.1875 )
+visible = false
+position = Vector2( 5.96046e-08, -16 )
+scale = Vector2( 1.5, 1.5 )
 texture = ExtResource( 1 )
+hframes = 60
+
+[node name="sprite2" type="Sprite" parent="."]
+position = Vector2( 5.96046e-08, -16 )
+texture = ExtResource( 3 )
 hframes = 60
 
 [node name="collider" type="CollisionShape2D" parent="."]
@@ -279,16 +417,21 @@ __meta__ = {
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "IdleRight"
 method_call_mode = 1
 anims/AttackDown = SubResource( 2 )
 anims/AttackLeft = SubResource( 3 )
 anims/AttackRight = SubResource( 4 )
 anims/AttackUp = SubResource( 5 )
-anims/IdleDown = SubResource( 6 )
-anims/IdleLeft = SubResource( 7 )
-anims/IdleRight = SubResource( 8 )
-anims/IdleUp = SubResource( 9 )
-anims/RunDown = SubResource( 10 )
-anims/RunLeft = SubResource( 11 )
-anims/RunRight = SubResource( 12 )
-anims/RunUp = SubResource( 13 )
+anims/DodgeDown = SubResource( 6 )
+anims/DodgeLeft = SubResource( 7 )
+anims/DodgeRight = SubResource( 8 )
+anims/DodgeUp = SubResource( 9 )
+anims/IdleDown = SubResource( 10 )
+anims/IdleLeft = SubResource( 11 )
+anims/IdleRight = SubResource( 12 )
+anims/IdleUp = SubResource( 13 )
+anims/RunDown = SubResource( 14 )
+anims/RunLeft = SubResource( 15 )
+anims/RunRight = SubResource( 16 )
+anims/RunUp = SubResource( 17 )

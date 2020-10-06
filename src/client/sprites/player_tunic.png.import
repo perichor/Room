@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/stone_brick.png-7732646c0edfeb1ab26a3bc6ee9fa580.stex"
+path="res://.import/player_tunic.png-7a37c93d48543546b3c7af8e902d89c1.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/stone_brick.png"
-dest_files=[ "res://.import/stone_brick.png-7732646c0edfeb1ab26a3bc6ee9fa580.stex" ]
+source_file="res://sprites/player_tunic.png"
+dest_files=[ "res://.import/player_tunic.png-7a37c93d48543546b3c7af8e902d89c1.stex" ]
 
 [params]
 
@@ -19,7 +19,7 @@ compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
-flags/repeat=1
+flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
@@ -28,7 +28,7 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
-stream=0
+stream=false
 size_limit=0
 detect_3d=false
 svg/scale=1.0

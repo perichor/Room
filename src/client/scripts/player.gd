@@ -9,6 +9,8 @@ const ACCELERATION: int = 8400;
 const MAX_SPEED: int = 200;
 const FRICTION = 14000;
 const SPRINT_FACTOR = 1.7;
+const DODGE_ACCELERATION = 10000;
+const DODGE_SPEED = 1000;
 
 enum {
 	RIGHT,
@@ -27,6 +29,10 @@ enum {
 	RUN_UP,
 	RUN_LEFT,
 	RUN_DOWN,
+	DODGE_RIGHT,
+	DODGE_UP,
+	DODGE_LEFT,
+	DODGE_DOWN,
 	ATTACK_RIGHT,
 	ATTACK_UP,
 	ATTACK_LEFT,
@@ -38,6 +44,7 @@ enum {
 enum {
 	IDLE,
 	RUN,
+	DODGE,
 	ATTACK
 }
 
@@ -53,6 +60,12 @@ var directionalStateMap = {
 		UP: RUN_UP,
 		LEFT: RUN_LEFT,
 		DOWN: RUN_DOWN
+	},
+	DODGE: {
+		RIGHT: DODGE_RIGHT,
+		UP: DODGE_UP,
+		LEFT: DODGE_LEFT,
+		DOWN: DODGE_DOWN
 	},
 	ATTACK: {
 		RIGHT: ATTACK_RIGHT,
@@ -71,6 +84,10 @@ var animationMapping = {
 	RUN_UP: 'RunUp',
 	RUN_LEFT: 'RunLeft',
 	RUN_DOWN: 'RunDown',
+	DODGE_RIGHT: 'DodgeRight',
+	DODGE_UP: 'DodgeUp',
+	DODGE_LEFT: 'DodgeLeft',
+	DODGE_DOWN: 'DodgeDown',
 	ATTACK_RIGHT: 'AttackRight',
 	ATTACK_UP: 'AttackUp',
 	ATTACK_LEFT: 'AttackLeft',
@@ -108,6 +125,8 @@ func _physics_process(delta):
 				move_state(delta);
 			RUN:
 				move_state(delta);
+			DODGE:
+				dodge_state(delta);
 			ATTACK:
 				attack_state(delta);
 	else:
@@ -131,10 +150,15 @@ func move_state(delta):
 		setDirection(input_vector);
 		state = getDirectionalState(RUN);
 	else:
+		animationPlayer.set_speed_scale(1);
 		state = getDirectionalState(IDLE);
 		vel = vel.move_toward(Vector2.ZERO, FRICTION * delta);
 
 	vel = move_and_slide(vel);
+	
+	if (Input.is_action_just_pressed('dodge') && input_vector != Vector2.ZERO):
+		actionState = DODGE;
+		state = getDirectionalState(DODGE);
 	
 	if (Input.is_action_just_pressed('attack')):
 		actionState = ATTACK;
@@ -142,7 +166,18 @@ func move_state(delta):
 		
 	updateAnimation();
 	
+func dodge_state(delta):
+	animationPlayer.set_speed_scale(1);
+	vel = vel.move_toward(vel.normalized() * DODGE_SPEED, DODGE_SPEED);
+	vel = move_and_slide(vel);
+	updateAnimation();
+	
+func on_dodge_animation_finished():
+	actionState = IDLE;
+	updateAnimation();
+	
 func attack_state(_delta):
+	animationPlayer.set_speed_scale(1);
 	vel = Vector2.ZERO;
 	updateAnimation()
 	
@@ -163,7 +198,8 @@ func updateRemotePlayer():
 		queue_free();
 		
 func updateAnimation():
-	animationPlayer.play(animationMapping[state]);
+	if (animationMapping.has(state)):
+		animationPlayer.play(animationMapping[state]);
 
 func setDirection(vector):
 	var angle = round(rad2deg(vector.angle()));
